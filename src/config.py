@@ -26,4 +26,3 @@ def set_value(key, value):
     new_config = json.dumps(config, indent=4)
     file.write(new_config)
     file.close()
-    print(new_config)
