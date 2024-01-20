@@ -1,60 +1,68 @@
 import config
 import menu
 
+config.config = dict()
+
 # 3 задание
-cfg = config.init_config()
-print(f"Разрешение экрана: {cfg['screenWigth']}x{cfg['screenHeight']}")
+config.init_config()
+wigth = config.get_value('screenWigth')
+height = config.get_value('screenHeight')
+print(f"Разрешение экрана: {wigth}x{height}")
+value = int(input("Введите значение громкости в %: "))
+config.set_value('volume', value)
+config.save_config()
 
-# ввод громкости, в формулировке задания не понял 3 пункт(зачем save если можно сразу через set)
-# value = int(input("Введите значение громкости в %: "))
-# config.set_value('volume', value)
+# # 4 задание, 1 алгоритм
+# # поменять x и y с помощью 3 переменной
 
-# 4 задание, 1 алгоритм
-# поменять x и y с помощью 3 переменной
+config.init_config()
+variable = config.config['screenWigth']
+config.config['screenWigth'] = config.config['screenHeight']
+config.config['screenHeight'] = variable
+print(f"Разрешение экрана(1 алгоритм): {config.config['screenWigth']}x{config.config['screenHeight']}")
+config.save_config()
 
-thrd_variable = cfg['screenWigth']
-cfg['screenWigth'] = cfg['screenHeight']
-cfg['screenHeight'] = thrd_variable
-print(f"Разрешение экрана(1 алгоритм): {cfg['screenWigth']}x{cfg['screenHeight']}")
-config.save_config(cfg)
+# # 2 алгоритм
+# # сохранить переменные в список, использовать reverse
 
-# 2 алгоритм
-# сохранить переменные в список, использовать reverse
-
-parameters = list(cfg.values())
+config.init_config()
+parameters = list(config.config.values())
 parameters.pop()
 parameters.reverse()
-cfg['screenWigth'] = parameters[1]
-cfg['screenHeight'] = parameters[0]
-print(f"Разрешение экрана(2 алгоритм): {cfg['screenWigth']}x{cfg['screenHeight']}")
-config.save_config(cfg)
+config.config['screenWigth'] = parameters[1]
+config.config['screenHeight'] = parameters[0]
+print(f"Разрешение экрана(2 алгоритм): {config.config['screenWigth']}x{config.config['screenHeight']}")
+config.save_config()
 
-# 3 алгоритм
-# через XOR
+# # 3 алгоритм
+# # через XOR
 
-variable_a = cfg['screenWigth']
-variable_b = cfg['screenHeight']
-a = variable_b ^ variable_a
-cfg['screenWigth'] = a ^ variable_a
-b = variable_a ^ variable_b
-cfg['screenHeight'] = b ^ variable_b
-print(f"Разрешение экрана(3 алгоритм): {cfg['screenWigth']}x{cfg['screenHeight']}")
-config.save_config(cfg)
+config.init_config()
+a = config.config['screenWigth']
+b = config.config['screenHeight']
+a ^= b
+b ^= a
+a ^= b
+config.config['screenWigth'] = a
+config.config['screenHeight'] = b
+print(f"Разрешение экрана(3 алгоритм): {config.config['screenWigth']}x{config.config['screenHeight']}")
+config.save_config()
 
-# 4 алгоритм
-# через сумму
+# # 4 алгоритм
+# # через сумму
 
-a = cfg['screenWigth']
-b = cfg['screenHeight']
+config.init_config()
+a = config.config['screenWigth']
+b = config.config['screenHeight']
 a = a + b
 b = a - b
 a = a - b
-cfg['screenWigth'] = a
-cfg['screenHeight'] = b
-print(f"Разрешение экрана(4 алгоритм): {cfg['screenWigth']}x{cfg['screenHeight']}")
-config.save_config(cfg)
+config.config['screenWigth'] = a
+config.config['screenHeight'] = b
+print(f"Разрешение экрана(4 алгоритм): {config.config['screenWigth']}x{config.config['screenHeight']}")
+config.save_config()
 
-# 5 задание
+# # 5 задание
 
 menu.print_menu()
 
