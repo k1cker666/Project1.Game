@@ -2,13 +2,13 @@ import json
 
 config = dict()
 
-def init_config():
+def init():
     file = open('./config/config.json', 'r')
     global config
     config = json.loads(file.read())
     file.close()
     
-def save_config():
+def save():
     file = open('./config/config.json', 'w')
     global config
     config = json.dumps(config, indent=4)
