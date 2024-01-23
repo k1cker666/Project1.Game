@@ -1,28 +1,25 @@
 import json
 
-def init_config():
-    file = open('./config/config.json', 'r')
-    config = json.loads(file.read())
-    file.close
-    return config
+config = dict()
 
-def save_config(config):
+def init():
+    file = open('./config/config.json', 'r')
+    global config
+    config = json.loads(file.read())
+    file.close()
+    
+def save():
     file = open('./config/config.json', 'w')
-    new_config = json.dumps(config, indent=4)
-    file.write(new_config)
-    file.close
+    global config
+    config = json.dumps(config, indent=4)
+    file.write(config)
+    file.close()
     
 def get_value(key):
-    config = init_config()
+    global config
     value = config[key]
     return value
     
 def set_value(key, value):
-    file = open('./config/config.json', 'r')
-    config = json.loads(file.read())
-    file.close()
-    file = open('./config/config.json', 'w')
+    global config
     config[key] = value
-    new_config = json.dumps(config, indent=4)
-    file.write(new_config)
-    file.close()

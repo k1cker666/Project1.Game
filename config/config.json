@@ -1,5 +1,5 @@
 {
-    "screenHeight": 100,
-    "screenWigth": 200,
-    "volume": 85
+    "screen_height": 800,
+    "screen_width": 650,
+    "game_name": "CS3"
 }
