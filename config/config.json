@@ -1,5 +1,16 @@
 {
     "screen_height": 800,
     "screen_width": 650,
-    "game_name": "CS3"
+    "game_name": "CS3",
+    "levels": [
+        {
+            "map_file": "map_1.json"
+        },
+        {
+            "map_file": "map_2.json"
+        },
+        {
+            "map_file": "map_3.json"
+        }
+    ]
 }
