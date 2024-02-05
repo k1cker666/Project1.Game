@@ -1,55 +1,48 @@
 import json
-from engine.board import cell
+from engine.board  import cell
 import pygame
+import config
+
 
 class Board:
+    game_map: list
+    block = cell.BlockCell()
+    food = cell.FoodCell()
+    empty = cell.EmptyCell()
     
-    def load(file):
-        file = str("././config/maps/"+file)
-        file = open(file, 'r')
-        game_map = json.loads(file.read())
-        file.close
+    def load(self, level_name):
+        file_path = str("././config/maps/"+level_name)
+        file_map = open(file_path, 'r')
+        game_map = json.loads(file_map.read()) # game_map хочется чтобы не изменялся
+        file_map.close()
+        self.game_map = game_map.copy()
         px = 0
         py = 0
-        for y in game_map:
-            for x in y:
-                if x == 0:
-                    game_map[py][px] = BlockCell.color
+        for line in self.game_map:
+            for item in line:
+                if item == 0:
+                    self.game_map[py][px] = self.block
                     px += 1
-                elif x == 1:
-                    game_map[py][px] = EmptyCell.color
+                elif item == 1:
+                    self.game_map[py][px] = self.empty
                     px += 1
-                elif x == 2:
-                    game_map[py][px] = FoodCell.color
+                elif item == 2:
+                    self.game_map[py][px] = self.food
                     px += 1
-                if px == 10:
+                if px == len(game_map[0]):
                     px = 0
                     py += 1
-        return game_map 
-    
-    def draw(screen, file):
-        game_map = Board.load(file)
-        cell_width = cell_height = 40
-        start_x = 125
-        start_y = 200
-        for y in range(len(game_map)):
-            for x in range(len(game_map[y])):
+                    
+    def draw(self, screen):
+        screen_width = config.get_value('screen_width')
+        screen_height = config.get_value('screen_height')
+        cell_width = cell_height = screen_height / 20
+        start_x = screen_width/2 - cell_width*len(self.game_map[0])/2
+        start_y = screen_height/2 - cell_height*len(self.game_map)/2
+        for y, line in enumerate(self.game_map):
+            py = y*cell_width+start_y
+            for x, item in enumerate(line):
                 px = x*cell_width+start_x
-                py = y*cell_width+start_y
-                pygame.draw.rect(screen, game_map[y][x], (px, py, cell_width, cell_height))
+                item.draw(screen, px, py)
+                #pygame.draw.rect(screen, item.color, (px, py, cell_width, cell_height))
         pygame.display.flip()
-        
-class EmptyCell(cell.Cell):
-    color = (255, 0, 0)
-    def draw():
-        pass
-
-class FoodCell(cell.Cell):
-    color = (0, 255, 0)
-    def draw():
-        pass
-    
-class BlockCell(cell.Cell):
-    color = (0, 0, 255)
-    def draw():
-        pass
