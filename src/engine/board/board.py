@@ -6,9 +6,6 @@ import config
 
 class Board:
     game_map: list
-    block = cell.BlockCell()
-    food = cell.FoodCell()
-    empty = cell.EmptyCell()
     
     def load(self, level_name):
         file_path = str("././config/maps/"+level_name)
@@ -21,13 +18,13 @@ class Board:
         for line in self.game_map:
             for item in line:
                 if item == 0:
-                    self.game_map[py][px] = self.block
+                    self.game_map[py][px] = cell.BlockCell()
                     px += 1
                 elif item == 1:
-                    self.game_map[py][px] = self.empty
+                    self.game_map[py][px] = cell.EmptyCell()
                     px += 1
                 elif item == 2:
-                    self.game_map[py][px] = self.food
+                    self.game_map[py][px] = cell.FoodCell()
                     px += 1
                 if px == len(game_map[0]):
                     px = 0
@@ -44,5 +41,4 @@ class Board:
             for x, item in enumerate(line):
                 px = x*cell_width+start_x
                 item.draw(screen, px, py)
-                #pygame.draw.rect(screen, item.color, (px, py, cell_width, cell_height))
         pygame.display.flip()

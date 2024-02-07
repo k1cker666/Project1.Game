@@ -1,9 +1,13 @@
 import pygame
+import config
 
 class Cell:
     cell_sprite_sheet = pygame.image.load('./images/sprites.png')
-    cell_width = 40
-    cell_height = 40
+    
+    def __init__(self):
+        self.cell_width = config.get_value('cell_width')
+        self.cell_height = config.get_value('cell_height')
+    
     def draw():
         pass
     
