@@ -43,10 +43,10 @@ class GameManager:
                     if event.type == pygame.QUIT:
                         return
                     elif event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_RIGHT:
-                            self.player.moving_right(screen)
                         if event.key == pygame.K_ESCAPE:
                             self.game_state = StateManager.in_menu
+                        if event.key == pygame.K_RIGHT:
+                            self.player.player_state = player.PlayerState.right
             pygame.display.flip()
             self.clock.tick(self.FPS)
 
