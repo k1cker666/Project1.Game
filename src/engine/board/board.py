@@ -1,5 +1,5 @@
 import json
-from engine.board  import cell
+from engine.board import cell
 import pygame
 import config
 
@@ -7,12 +7,20 @@ import config
 class Board:
     game_map: list
     
-    def load(self, level_name):
+    def __init__(self, level_name):
         file_path = str("././config/maps/"+level_name)
         file_map = open(file_path, 'r')
-        game_map = json.loads(file_map.read()) # game_map хочется чтобы не изменялся
+        game_map = json.loads(file_map.read())
         file_map.close()
         self.game_map = game_map.copy()
+        self.screen_width = config.get_value('screen_width')
+        self.screen_height = config.get_value('screen_height')
+        self.cell_width = self.cell_height = self.screen_height / 20
+        self.start_x = self.screen_width/2 - self.cell_width*len(self.game_map[0])/2
+        self.start_y = self.screen_height/2 - self.cell_height*len(self.game_map)/2
+        self.load()
+        
+    def load(self):
         px = 0
         py = 0
         for line in self.game_map:
@@ -26,19 +34,23 @@ class Board:
                 elif item == 2:
                     self.game_map[py][px] = cell.FoodCell()
                     px += 1
-                if px == len(game_map[0]):
+                elif item == 3:
+                    self.game_map[py][px] = cell.StartCell()
+                    px += 1
+                if px == len(self.game_map[0]):
                     px = 0
                     py += 1
                     
     def draw(self, screen):
-        screen_width = config.get_value('screen_width')
-        screen_height = config.get_value('screen_height')
-        cell_width = cell_height = screen_height / 20
-        start_x = screen_width/2 - cell_width*len(self.game_map[0])/2
-        start_y = screen_height/2 - cell_height*len(self.game_map)/2
         for y, line in enumerate(self.game_map):
-            py = y*cell_width+start_y
+            py = y*self.cell_width+self.start_y
             for x, item in enumerate(line):
-                px = x*cell_width+start_x
+                px = x*self.cell_width+self.start_x
                 item.draw(screen, px, py)
         pygame.display.flip()
+        
+    def find_start_cell(self):
+        for py in range(len(self.game_map)):
+            for px in range(len(self.game_map[py])):
+                if isinstance(self.game_map[py][px], cell.StartCell):
+                    return (px, py)
