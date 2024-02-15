@@ -4,6 +4,7 @@ from engine.board import board
 from enum import Enum, auto
 import config
 from engine.entity import player
+from engine import image
 
 class StateManager(Enum):
     in_menu = auto()
@@ -20,6 +21,7 @@ class GameManager:
         self.board = board.Board(level_name)
         start_cell_px, start_cell_py = self.board.find_start_cell()
         self.player = player.Player(start_cell_px, start_cell_py)
+        self.image = image.Image
                 
     def run(self, screen):
         while True:
@@ -35,9 +37,8 @@ class GameManager:
                         if event.key == pygame.K_3:
                             return 
             if self.game_state == StateManager.game_process:
-                background = pygame.image.load('./images/testbg.png')
-                screen.blit(background, (0, 0))
-                self.board.draw(screen)
+                screen.blit(self.image.background, (0, 0))
+                #self.board.draw(screen)
                 self.player.draw(screen)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
