@@ -51,6 +51,10 @@ class GameManager:
                             self.player.player_state = player.PlayerState.right
                         if event.key == pygame.K_LEFT:
                             self.player.player_state = player.PlayerState.left
+                        if event.key == pygame.K_DOWN:
+                            self.player.player_state = player.PlayerState.down
+                        if event.key == pygame.K_UP:
+                            self.player.player_state = player.PlayerState.up
             pygame.display.flip()
             self.clock.tick(self.FPS)
 

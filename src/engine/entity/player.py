@@ -15,8 +15,8 @@ class Player(pygame.sprite.Sprite):
     images = image.Image
     move_right = [images.player_right_1, images.player_right_2, images.player_right_3, images.player_right_2, images.player_right_1]
     move_left = [images.player_left_1, images.player_left_2, images.player_left_3, images.player_left_2, images.player_left_1]
-    # move_down = [(0, 120, 40, 130), (40, 120, 80, 130), (80, 120, 120, 130), (40, 120, 80, 130), (0, 120, 40, 130)]
-    # move_up = [(0, 130, 40, 200), (40, 130, 80, 200), (80, 120, 120, 200), (40, 130, 80, 200), (0, 130, 40, 200)]
+    move_down = [images.player_down_1, images.player_down_2, images.player_down_3, images.player_down_2, images.player_down_1]
+    move_up = [images.player_up_1, images.player_up_2, images.player_up_3, images.player_up_2, images.player_up_1]
     
     def __init__(self, start_cell_px, start_cell_py):
         super().__init__()
@@ -37,6 +37,7 @@ class Player(pygame.sprite.Sprite):
             
     def draw(self, screen):
         if self.player_state == PlayerState.stay:
+            self.image = self.images.player_stay
             screen.blit(self.image, (self.rect.x, self.rect.y))
         if self.player_state == PlayerState.right:
             if self.count >= 30:
@@ -54,3 +55,19 @@ class Player(pygame.sprite.Sprite):
                 screen.blit(self.image, (self.rect.x, self.rect.y))
                 self.count += 1
                 self.rect.x -= 3
+        if self.player_state == PlayerState.down:
+            if self.count >= 30:
+                self.count = 0
+            else:
+                self.image = self.move_down[self.count // 7]
+                screen.blit(self.image, (self.rect.x, self.rect.y))
+                self.count += 1
+                self.rect.y += 3
+        if self.player_state == PlayerState.up:
+            if self.count >= 30:
+                self.count = 0
+            else:
+                self.image = self.move_up[self.count // 7]
+                screen.blit(self.image, (self.rect.x, self.rect.y))
+                self.count += 1
+                self.rect.y -= 3
