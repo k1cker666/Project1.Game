@@ -7,15 +7,16 @@ from engine import image
 class PlayerState(Enum):
     stay = auto()
     right = auto()
+    left = auto()
     down = auto()
     up = auto()
     
 class Player(pygame.sprite.Sprite):
-    move_right = [(0, 40, 40, 80), (40, 40, 80, 80), (80, 40, 120, 80), (40, 40, 80, 80), (0, 40, 40, 80)]
-    move_left = [(0, 80, 40, 120), (40, 80, 80, 120), (80, 80, 120, 120), (40, 80, 80, 120), (0, 80, 40, 120)]
-    move_down = [(0, 120, 40, 160), (40, 120, 80, 160), (80, 120, 120, 160), (40, 120, 80, 160), (0, 120, 40, 160)]
-    move_up = [(0, 160, 40, 200), (40, 160, 80, 200), (80, 120, 120, 200), (40, 160, 80, 200), (0, 160, 40, 200)]
     images = image.Image
+    move_right = [images.player_right_1, images.player_right_2, images.player_right_3, images.player_right_2, images.player_right_1]
+    move_left = [images.player_left_1, images.player_left_2, images.player_left_3, images.player_left_2, images.player_left_1]
+    # move_down = [(0, 120, 40, 130), (40, 120, 80, 130), (80, 120, 120, 130), (40, 120, 80, 130), (0, 120, 40, 130)]
+    # move_up = [(0, 130, 40, 200), (40, 130, 80, 200), (80, 120, 120, 200), (40, 130, 80, 200), (0, 130, 40, 200)]
     
     def __init__(self, start_cell_px, start_cell_py):
         super().__init__()
@@ -36,12 +37,20 @@ class Player(pygame.sprite.Sprite):
             
     def draw(self, screen):
         if self.player_state == PlayerState.stay:
-            # self.image.blit(self.sprite_sheet, (0, 0), (120, 0, 160, 40))
             screen.blit(self.image, (self.rect.x, self.rect.y))
-        # if self.player_state == PlayerState.right:
-        #     if self.count >= 60:
-        #         self.count = 0
-        #     else:
-        #         self.image.blit(self.sprite_sheet, (0, 0), self.move_right[self.count // 15])
-        #         screen.blit(self.image, (self.rect.x, self.rect.y))
-        #         self.count += 1
+        if self.player_state == PlayerState.right:
+            if self.count >= 30:
+                self.count = 0
+            else:
+                self.image = self.move_right[self.count // 7]
+                screen.blit(self.image, (self.rect.x, self.rect.y))
+                self.count += 1
+                self.rect.x += 3
+        if self.player_state == PlayerState.left:
+            if self.count >= 30:
+                self.count = 0
+            else:
+                self.image = self.move_left[self.count // 7]
+                screen.blit(self.image, (self.rect.x, self.rect.y))
+                self.count += 1
+                self.rect.x -= 3

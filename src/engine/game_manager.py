@@ -38,7 +38,7 @@ class GameManager:
                             return 
             if self.game_state == StateManager.game_process:
                 screen.blit(self.image.background, (0, 0))
-                #self.board.draw(screen)
+                self.board.draw(screen)
                 self.player.draw(screen)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -46,8 +46,11 @@ class GameManager:
                     elif event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
                             self.game_state = StateManager.in_menu
+                            self.player.player_state = player.PlayerState.stay
                         if event.key == pygame.K_RIGHT:
                             self.player.player_state = player.PlayerState.right
+                        if event.key == pygame.K_LEFT:
+                            self.player.player_state = player.PlayerState.left
             pygame.display.flip()
             self.clock.tick(self.FPS)
 
