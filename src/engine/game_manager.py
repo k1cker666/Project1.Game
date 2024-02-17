@@ -40,22 +40,23 @@ class GameManager:
                 screen.blit(self.image.background, (0, 0))
                 self.board.draw(screen)
                 self.player.draw(screen)
+                self.player.move()
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         return
                     elif event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
                             self.game_state = StateManager.in_menu
-                            self.player.player_state = player.PlayerState.stay
+                            self.player.player_direction = player.PlayerDirection.stay
                         if event.key == pygame.K_RIGHT:
-                            self.player.player_state = player.PlayerState.right
+                            self.player.player_direction = player.PlayerDirection.right
                         if event.key == pygame.K_LEFT:
-                            self.player.player_state = player.PlayerState.left
+                            self.player.player_direction = player.PlayerDirection.left
                         if event.key == pygame.K_DOWN:
-                            self.player.player_state = player.PlayerState.down
+                            self.player.player_direction = player.PlayerDirection.down
                         if event.key == pygame.K_UP:
-                            self.player.player_state = player.PlayerState.up
-            pygame.display.flip()
+                            self.player.player_direction = player.PlayerDirection.up
+            pygame.display.update()
             self.clock.tick(self.FPS)
 
     def change_level(self, num):

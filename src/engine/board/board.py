@@ -47,7 +47,6 @@ class Board:
             for x, item in enumerate(line):
                 px = x*self.cell_width+self.start_x
                 item.draw(screen, px, py)
-        pygame.display.flip()
         
     def find_start_cell(self):
         for py in range(len(self.game_map)):
