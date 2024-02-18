@@ -1,9 +1,8 @@
 import pygame
-import config
-from engine import image
+from engine import sprites
 
-class Cell(pygame.sprite.Sprite):
-    images = image.Image
+class Cell(): #pygame.sprite.Sprite 
+    sprites = sprites.Image
         
     def __init__(self):
         super().__init__()
@@ -14,7 +13,7 @@ class Cell(pygame.sprite.Sprite):
 class EmptyCell(Cell):
     def __init__(self):
         super().__init__()
-        self.image = self.images.empty_cell
+        self.image = self.sprites.empty_cell
         self.rect = self.image.get_rect()
     
     def draw(self, screen, px, py):
@@ -23,7 +22,7 @@ class EmptyCell(Cell):
 class FoodCell(Cell):
     def __init__(self):
         super().__init__()
-        self.image = self.images.food_cell
+        self.image = self.sprites.food_cell
         self.rect = self.image.get_rect()
     
     def draw(self, screen, px, py):
@@ -32,7 +31,7 @@ class FoodCell(Cell):
 class BlockCell(Cell):
     def __init__(self):
         super().__init__()
-        self.image = self.images.block_cell
+        self.image = self.sprites.block_cell
         self.rect = self.image.get_rect()
     
     def draw(self, screen, px, py):
@@ -41,7 +40,7 @@ class BlockCell(Cell):
 class StartCell(Cell):
     def __init__(self):
         super().__init__()
-        self.image = self.images.empty_cell
+        self.image = self.sprites.empty_cell
         self.rect = self.image.get_rect()
         
     def draw(self, screen, px, py):

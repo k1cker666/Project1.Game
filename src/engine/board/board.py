@@ -3,21 +3,20 @@ from engine.board import cell
 import pygame
 import config
 
-
 class Board:
     game_map: list
     
     def __init__(self, level_name):
         file_path = str("././config/maps/"+level_name)
         file_map = open(file_path, 'r')
-        game_map = json.loads(file_map.read())
+        game_map_json = json.loads(file_map.read())
         file_map.close()
-        self.game_map = game_map.copy()
+        self.game_map = game_map_json.copy()
         self.screen_width = config.get_value('screen_width')
         self.screen_height = config.get_value('screen_height')
         self.cell_width = self.cell_height = self.screen_height / 20
         self.start_x = self.screen_width/2 - self.cell_width*len(self.game_map[0])/2
-        self.start_y = self.screen_height/2 - self.cell_height*len(self.game_map)/2
+        self.start_y = self.screen_height/2 - self.cell_height*len(self.game_map)/2 + 3*self.screen_height/32
         self.load()
         
     def load(self):
@@ -53,3 +52,6 @@ class Board:
             for px in range(len(self.game_map[py])):
                 if isinstance(self.game_map[py][px], cell.StartCell):
                     return (px, py)
+    
+    # def get_cell(self, coord):
+    #     return self.game_map[coord[1]][coord[0]]

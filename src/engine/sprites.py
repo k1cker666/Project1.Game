@@ -6,6 +6,10 @@ class Image:
     empty_cell = pygame.image.load('./images/sprites/EmptyCell.png')
     food_cell = pygame.image.load('./images/sprites/FoodCell.png')
     
+    health_point = pygame.image.load('./images/sprites/HP.png')
+    health_point.set_colorkey((255, 255, 255))
+    health_point = pygame.transform.scale(health_point, (50, 50))
+    
     player_stay = pygame.image.load('./images/sprites/player/Stay.png')
     player_stay.set_colorkey((255, 255, 255))
     
