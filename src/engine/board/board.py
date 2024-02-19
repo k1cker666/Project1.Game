@@ -53,5 +53,5 @@ class Board:
                 if isinstance(self.game_map[py][px], cell.StartCell):
                     return (px, py)
     
-    # def get_cell(self, coord):
-    #     return self.game_map[coord[1]][coord[0]]
+    def get_cell(self, coords):
+        return self.game_map[coords[1]][coords[0]]
