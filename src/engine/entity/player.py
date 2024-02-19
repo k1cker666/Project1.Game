@@ -3,7 +3,7 @@ from engine.board import cell
 import pygame
 from enum import Enum, auto
 from engine import sprites
-from engine.board import board 
+from engine.board import board
 
 class PlayerDirection(Enum):
     stay = auto()
@@ -23,15 +23,13 @@ class Player(pygame.sprite.Sprite):
     move_down = [sprites.player_down_1, sprites.player_down_2, sprites.player_down_3, sprites.player_down_2, sprites.player_down_1]
     move_up = [sprites.player_up_1, sprites.player_up_2, sprites.player_up_3, sprites.player_up_2, sprites.player_up_1]
     count = 0
-    speed = 3
+    speed = 2
     player_direction = PlayerDirection.stay
     event = PlayerEvent.NoEvent
     helthpoints = 4
     score = 0
     current_x = int
     current_y = int
-    board = board.Board
-    block_cell = cell.BlockCell()
     
     def __init__(self, start_cell_px, start_cell_py):
         super().__init__()
@@ -81,9 +79,6 @@ class Player(pygame.sprite.Sprite):
                 self.rect.x += self.speed
             if self.rect.x >= right_board_x-40:
                 self.rect.x = left_board_x
-            if self.rect.colliderect(self.block_cell.rect):
-                self.player_direction = PlayerDirection.stay
-                print("col")
         if self.player_direction == PlayerDirection.left:
             if self.count >= 30:
                 self.count = 0
@@ -114,16 +109,15 @@ class Player(pygame.sprite.Sprite):
         current_map_y = int((self.rect.y-self.start_board_y)//40)
         return ((current_map_x, current_map_y))
         
-    # def interact(self):
-    #     coords = self.get_coord()
-    #     x_in_cell = self.rect.x - self.start_board_x - coords[0]*40
-    #     y_in_cell = self.rect.y - self.start_board_y - coords[1]*40
-    #     if self.board.get_cell(coords) == cell.FoodCell():
-    #         if self.player_direction == PlayerDirection.right or self.player_direction == PlayerDirection.left:
-    #             if x_in_cell in range(17, 23):
-    #                 self.event = PlayerEvent.FoodEvent
+    def interact(self, current_cell):
+        coords = self.get_coord()
+        x_in_cell = int(self.rect.x - self.start_board_x - coords[0]*40)
+        y_in_cell = int(self.rect.y - self.start_board_y - coords[1]*40)
+        if isinstance(current_cell, cell.FoodCell):
+            if self.player_direction == PlayerDirection.right or self.player_direction == PlayerDirection.left:
+                if x_in_cell in range(6, 9):
+                    self.event = PlayerEvent.FoodEvent
+            if self.player_direction == PlayerDirection.up or self.player_direction == PlayerDirection.down:
+                if y_in_cell in range(6, 9):
+                    self.event = PlayerEvent.FoodEvent
                     
-    # def get_score(self):
-    #     if self.event == PlayerEvent.FoodEvent:
-    #         self.score += 100
-            

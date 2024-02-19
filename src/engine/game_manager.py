@@ -42,9 +42,8 @@ class GameManager:
                 self.board.draw(screen)
                 self.player.draw(screen)
                 self.player.move()
-                # self.player.interact()
-                # self.player.get_score()
-                # self.change_cell()
+                self.player.interact(self.board.get_cell(self.player.get_coord()))
+                self.handle_player_event()
                 self.draw_game_info(screen)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -108,7 +107,11 @@ class GameManager:
         screen.blit(score_board, (screen_width/2+int(screen_width/20), 20))
         pygame.draw.rect(screen, (255, 255, 0), 
                          (screen_width/2+int(screen_width/20), 20, info_board_width, info_board_height), 3)
-        
-    # def change_cell(self):
-    #     if self.player.event == player.PlayerEvent.FoodEvent:
-    #         self.board.game_map[self.player.coords[1]][self.player.coords[0]] = cell.EmptyCell()
+                    
+    def handle_player_event(self):
+        coords = self.player.get_coord()
+        if self.player.event == player.PlayerEvent.FoodEvent:
+            self.player.score += 50
+            self.board.game_map[coords[1]][coords[0]] = cell.EmptyCell()
+            self.player.event = player.PlayerEvent.NoEvent
+            
