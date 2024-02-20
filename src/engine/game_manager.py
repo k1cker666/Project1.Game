@@ -137,8 +137,8 @@ class GameManager:
                     
     def handle_player_event(self):
         coords = self.player.get_coord()
-        if self.player.event == player.PlayerEventType.FoodEvent:
-            self.board.set_empty_cell(coords)
+        if self.player.event.type_event == player.PlayerEventType.FoodEvent:
+            self.board.set_empty_cell(self.player.event.context['coords'])
             self.player.clear_event()
     
     def turn_next_level(self, screen: pygame.surface.Surface):

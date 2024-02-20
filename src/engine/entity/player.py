@@ -20,7 +20,7 @@ class PlayerEvent:
     type_event: PlayerEventType
     context: dict
     
-    def __init__(self, type_event, context):
+    def __init__(self, type_event, context = None):
         self.type_event = type_event
         self.context = context
         
@@ -33,7 +33,7 @@ class Player(pygame.sprite.Sprite):
     count = 0
     speed = 2
     player_direction = PlayerDirection.stay
-    event = PlayerEventType.NoEvent
+    event = PlayerEvent(type_event = PlayerEventType.NoEvent)
     helthpoints = 4
     score = 0
     current_x = int
@@ -116,6 +116,13 @@ class Player(pygame.sprite.Sprite):
         current_map_y = int((self.rect.y-self.start_board_y)//40)
         return ((current_map_x, current_map_y))
         
+    def get_player_event(self, event):
+        events = {
+            0: PlayerEventType.NoEvent,
+            1: PlayerEventType.FoodEvent
+        }
+        return PlayerEvent(type_event=events[event], context={'coords': self.get_coord()})
+    
     def interact(self, current_cell):
         coords = self.get_coord()
         x_in_cell = int(self.rect.x - self.start_board_x - coords[0]*40)
@@ -123,11 +130,11 @@ class Player(pygame.sprite.Sprite):
         if isinstance(current_cell, cell.FoodCell):
             if self.player_direction == PlayerDirection.right or self.player_direction == PlayerDirection.left:
                 if x_in_cell in range(6, 9):
-                    self.event = PlayerEventType.FoodEvent
+                    self.event = self.get_player_event(1)
                     self.score += 50
             if self.player_direction == PlayerDirection.up or self.player_direction == PlayerDirection.down:
                 if y_in_cell in range(6, 9):
-                    self.event = PlayerEventType.FoodEvent
+                    self.event = self.get_player_event(1)
                     self.score += 50
                     
     def change_direction(self, direction):
@@ -139,4 +146,4 @@ class Player(pygame.sprite.Sprite):
         self.player_direction = directions[direction]
         
     def clear_event(self):
-        self.event = PlayerEventType.NoEvent
+        self.event = self.get_player_event(0)
