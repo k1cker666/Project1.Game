@@ -4,7 +4,7 @@
     "game_name": "CS3",
     "cell_width": 40,
     "cell_height": 40,
-    "FPS": 30,
+    "FPS": 40,
     "levels": [
         {
             "map_file": "map_1.json"

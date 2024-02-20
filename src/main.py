@@ -21,6 +21,6 @@ def quit_game():
     sys.exit()
 
 screen = init_game()
-game_manager = game_manager.GameManager() #__init__
-game_manager.run(screen) # после __init__
+game_manager = game_manager.GameManager()
+game_manager.run(screen)
 quit_game()

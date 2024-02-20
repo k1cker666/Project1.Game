@@ -55,3 +55,24 @@ class Board:
     
     def get_cell(self, coords):
         return self.game_map[coords[1]][coords[0]]
+    
+    def set_empty_cell(self, coords):
+        self.game_map[coords[1]][coords[0]] = cell.EmptyCell()
+        
+    def check_food_cells(self):
+        for line in self.game_map:
+            for item in line:
+                if isinstance(item, cell.FoodCell):
+                    return False
+        return True
+    
+    def admin_clear_food_cells(self):
+        py = 0
+        px = 0
+        for line in self.game_map:
+            for item in line:
+                if isinstance(item, cell.FoodCell):
+                    self.game_map[py][px] = cell.EmptyCell()
+                px += 1
+            py +=1
+            px = 0

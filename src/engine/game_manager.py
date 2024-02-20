@@ -6,10 +6,12 @@ import config
 from engine.entity import player
 from engine import sprites
 from engine.board import cell
+import time
 
 class StateManager(Enum):
     in_menu = auto()
     game_process = auto()
+    level_complite_window = auto()
     
 class GameManager:
     clock = pygame.time.Clock()
@@ -20,11 +22,12 @@ class GameManager:
         self.FPS = config.get_value('FPS')
         level_name = self.change_level(self.num)
         self.board = board.Board(level_name)
+        self.player = player.Player()
         start_cell_px, start_cell_py = self.board.find_start_cell()
-        self.player = player.Player(start_cell_px, start_cell_py)
+        self.player.set_spawn_coord(start_cell_px, start_cell_py)
         self.image = sprites.Image
                 
-    def run(self, screen):
+    def run(self, screen: pygame.surface.Surface):
         while True:
             if self.game_state == StateManager.in_menu:
                 screen.blit(self.image.background, (0, 0))
@@ -51,16 +54,35 @@ class GameManager:
                     elif event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
                             self.game_state = StateManager.in_menu
-                            self.player.player_direction = player.PlayerDirection.stay
+                            self.player.change_direction(0)
                         if event.key == pygame.K_RIGHT:
-                            self.player.player_direction = player.PlayerDirection.right
+                            self.player.change_direction(1)
                         if event.key == pygame.K_LEFT:
-                            self.player.player_direction = player.PlayerDirection.left
+                            self.player.change_direction(2)
                         if event.key == pygame.K_DOWN:
-                            self.player.player_direction = player.PlayerDirection.down
+                            self.player.change_direction(3)
                         if event.key == pygame.K_UP:
-                            self.player.player_direction = player.PlayerDirection.up
-            pygame.display.update()
+                            self.player.change_direction(4)
+                        if event.key == pygame.K_0:
+                            self.board.admin_clear_food_cells()
+                if self.board.check_food_cells():
+                    self.set_alpha_background(screen)
+                    self.game_state = StateManager.level_complite_window
+            if self.game_state == StateManager.level_complite_window:
+                self.turn_next_level(screen)
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_1:
+                            level_name = self.change_level(self.num)
+                            self.board = board.Board(level_name)
+                            start_cell_px, start_cell_py = self.board.find_start_cell()
+                            self.player.set_spawn_coord(start_cell_px, start_cell_py)
+                            self.game_state = StateManager.game_process
+                        if event.key == pygame.K_2:
+                            self.game_state = StateManager.in_menu
+                    if event.type == pygame.QUIT:
+                        return
+            pygame.display.flip()
             self.clock.tick(self.FPS)
 
     def change_level(self, num):
@@ -69,13 +91,18 @@ class GameManager:
         self.num +=1
         return level_name
         
-    def draw_game_info(self, screen):
+    def draw_game_info(self, screen: pygame.surface.Surface):
         screen_width = config.get_value('screen_width')
         screen_height = config.get_value('screen_height')
-        info_board_height = screen_width/5
+        info_board_height = screen_width/6
         info_board_width = int(screen_height/3)
         font = pygame.font.Font('./fonts/BetterVCR.ttf',  int(info_board_height/6))
         font_score = pygame.font.Font('./fonts/BetterVCR.ttf',  int(info_board_height/3))
+        font_level = pygame.font.Font('./fonts/BetterVCR.ttf',  int(info_board_height/3))
+        
+        level_text = font_level.render(f'Level {self.num}', 1, (255, 255, 0))
+        level_text_pos = level_text.get_rect(center=(screen_width//2, 20))
+        screen.blit(level_text, level_text_pos)
         
         hp_board = pygame.Surface((info_board_width, info_board_height))
         hp_board.fill((0, 0, 0))
@@ -90,9 +117,9 @@ class GameManager:
             hp_board.blit(self.image.health_point, health_point_rect)
             hearts_start_x = hearts_start_x+40+20
         
-        screen.blit(hp_board, (screen_width/2-int(screen_width/20)-info_board_width, 20))
+        screen.blit(hp_board, (screen_width/2-int(screen_width/20)-info_board_width, 55))
         pygame.draw.rect(screen, (255, 255, 0), 
-                         (screen_width/2-int(screen_width/20)-info_board_width, 20, info_board_width, info_board_height), 3)
+                         (screen_width/2-int(screen_width/20)-info_board_width, 55, info_board_width, info_board_height), 3)
         
         score_board = pygame.Surface((info_board_width, info_board_height))
         score_board.fill((0, 0, 0))
@@ -104,14 +131,45 @@ class GameManager:
         score_count_pos = score_count.get_rect(center=(info_board_width//2, info_board_height//1.6))
         score_board.blit(score_count, score_count_pos)
         
-        screen.blit(score_board, (screen_width/2+int(screen_width/20), 20))
+        screen.blit(score_board, (screen_width/2+int(screen_width/20), 55))
         pygame.draw.rect(screen, (255, 255, 0), 
-                         (screen_width/2+int(screen_width/20), 20, info_board_width, info_board_height), 3)
+                         (screen_width/2+int(screen_width/20), 55, info_board_width, info_board_height), 3)
                     
     def handle_player_event(self):
         coords = self.player.get_coord()
-        if self.player.event == player.PlayerEvent.FoodEvent:
-            self.player.score += 50
-            self.board.game_map[coords[1]][coords[0]] = cell.EmptyCell()
-            self.player.event = player.PlayerEvent.NoEvent
-            
+        if self.player.event == player.PlayerEventType.FoodEvent:
+            self.board.set_empty_cell(coords)
+            self.player.clear_event()
+    
+    def turn_next_level(self, screen: pygame.surface.Surface):
+        self.player.change_direction(0)
+        
+        window_width = 300
+        window_height = 150
+        level_complite_window = pygame.Surface((window_width, window_height))
+        level_complite_window.fill((0, 0, 0))
+        level_complite_window_pos = level_complite_window.get_rect(center=(config.get_value('screen_width')//2, config.get_value('screen_height')//2))
+        
+        font = pygame.font.Font('./fonts/BetterVCR.ttf',  int(window_height/8))
+        level_complite_text = font.render(f'Level {self.num} complite!', 1, (255, 255, 0))
+        level_complite_text_pos = level_complite_text.get_rect(center=(window_width//2, window_height/3))
+        level_complite_window.blit(level_complite_text, level_complite_text_pos)
+        
+        font_button = pygame.font.Font('./fonts/BetterVCR.ttf',  int(window_height/10))
+        next_level = font_button.render('1. Next level', 1, (255, 255, 0))
+        next_level_pos = next_level.get_rect(center=(window_width//2, window_height*3/5))
+        level_complite_window.blit(next_level, next_level_pos)
+        
+        menu = font_button.render('2. Menu', 1, (255, 255, 0))
+        menu_pos = menu.get_rect(center=(window_width//2, window_height*4/5))
+        level_complite_window.blit(menu, menu_pos)
+        
+        screen.blit(level_complite_window, level_complite_window_pos)
+        pygame.draw.rect(screen, (255, 255, 0),
+                         (level_complite_window_pos.x, level_complite_window_pos.y, window_width, window_height), 3)
+        
+    def set_alpha_background(self, screen: pygame.surface.Surface):
+        fon = pygame.Surface((650, 800))
+        fon.fill((0, 0, 0))
+        fon.set_alpha(100)
+        screen.blit(fon, (0, 0))
