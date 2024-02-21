@@ -71,3 +71,21 @@ class Board:
                 px += 1
             py +=1
             px = 0
+            
+    def is_block_ahead(self, coords, direction):
+        if direction == 2:
+            if isinstance(self.game_map[coords[1]][coords[0]+1], cell.BlockCell):
+                return False
+            return True
+        if direction == 3:
+            if isinstance(self.game_map[coords[1]][coords[0]], cell.BlockCell):
+                return False
+            return True
+        if direction == 4:
+            if isinstance(self.game_map[coords[1]+1][coords[0]], cell.BlockCell):
+                return False
+            return True
+        if direction == 5:
+            if isinstance(self.game_map[coords[1]][coords[0]], cell.BlockCell):
+                return False
+            return True

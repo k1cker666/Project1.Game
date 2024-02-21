@@ -50,66 +50,81 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
     
     def set_spawn_coord(self, start_cell_px, start_cell_py):
-        self.rect.x = self.coords.cells_to_pixels_x(start_cell_px)
-        self.rect.y = self.coords.cells_to_pixels_y(start_cell_py)
+        start_coord_tuple = (start_cell_px, start_cell_py)
+        self.rect.x, self.rect.y = self.coords.cells_to_pixels_xy(start_coord_tuple)
           
     def draw(self, screen: pygame.surface.Surface):
         if self.player_direction == PlayerDirection.stay:
             self.image = self.sprites.player_stay
             screen.blit(self.image, (self.rect.x, self.rect.y))
         if self.player_direction == PlayerDirection.right:
-            self.image = self.move_right[self.count // 9]
+            self.image = self.move_right[self.count // 6]
             screen.blit(self.image, (self.rect.x, self.rect.y))
         if self.player_direction == PlayerDirection.left:
-            self.image = self.move_left[self.count // 9]
+            self.image = self.move_left[self.count // 6]
             screen.blit(self.image, (self.rect.x, self.rect.y))        
         if self.player_direction == PlayerDirection.down:        
-            self.image = self.move_down[self.count // 9]
+            self.image = self.move_down[self.count // 6]
             screen.blit(self.image, (self.rect.x, self.rect.y))    
         if self.player_direction == PlayerDirection.up:
-            self.image = self.move_up[self.count // 9]
+            self.image = self.move_up[self.count // 6]
             screen.blit(self.image, (self.rect.x, self.rect.y))
                 
-    def move(self):
+    def move(self, is_block_ahead: bool):
         left_board_x = self.coords.start_board_x
         up_board_y = self.coords.start_board_y
         right_board_x = self.screen_width-left_board_x
         down_board_y = up_board_y + self.cell_height*15
+        coord = self.get_coord()
+        x_cell = coord[0]+1
+        y_cell = coord[1]+1
         if self.player_direction == PlayerDirection.stay:
             self.rect.x = self.rect.x
             self.rect.y = self.rect.y
         if self.player_direction == PlayerDirection.right:
-            if self.count >= 40:
+            if self.count >= 20:
                 self.count = 0
             else:
                 self.count += 1
                 self.rect.x += self.speed
             if self.rect.x >= right_board_x-40:
                 self.rect.x = left_board_x
+            if not is_block_ahead:
+                self.rect.x -= self.coords.get_x_in_cell(coord, self.rect.x)
+                self.player_direction = PlayerDirection.stay
         if self.player_direction == PlayerDirection.left:
-            if self.count >= 40:
+            if self.count >= 20:
                 self.count = 0
             else:    
                 self.count += 1
                 self.rect.x -= self.speed
             if self.rect.x <= left_board_x:
                 self.rect.x = right_board_x-40
+            if not is_block_ahead:
+                self.rect.x = self.coords.cells_to_pixels_x(x_cell)
+                self.player_direction = PlayerDirection.stay
         if self.player_direction == PlayerDirection.down:
-            if self.count >= 40:
+            if self.count >= 20:
                 self.count = 0
             else:    
                 self.count += 1
                 self.rect.y += self.speed
             if self.rect.y >= down_board_y-40:
                 self.rect.y = up_board_y
+            if not is_block_ahead:
+                self.rect.y -= self.coords.get_y_in_cell(coord, self.rect.y)
+                self.player_direction = PlayerDirection.stay
         if self.player_direction == PlayerDirection.up:
-            if self.count >= 40:
+            if self.count >= 20:
                 self.count = 0
             else:    
                 self.count += 1
                 self.rect.y -= self.speed
             if self.rect.y <= up_board_y:
                 self.rect.y = down_board_y-40
+            if not is_block_ahead:
+                self.rect.y = self.coords.cells_to_pixels_y(y_cell)
+                self.player_direction = PlayerDirection.stay
                 
     def get_coord(self):
         return ((self.coords.pixels_to_cells_xy(self.rect.x, self.rect.y)))
@@ -125,12 +140,12 @@ class Player(pygame.sprite.Sprite):
         x_in_cell, y_in_cell = self.coords.get_xy_in_cell(self.get_coord(), self.rect.x, self.rect.y)
         if isinstance(current_cell, cell.FoodCell):
             if self.player_direction == PlayerDirection.right or self.player_direction == PlayerDirection.left:
-                if x_in_cell in range(6, 9):
+                if x_in_cell in range(0, 3):
                     self.event = self.get_player_event(1)
                     self.score += 50
                     self.score_count += 1
             if self.player_direction == PlayerDirection.up or self.player_direction == PlayerDirection.down:
-                if y_in_cell in range(6, 9):
+                if y_in_cell in range(0, 3):
                     self.event = self.get_player_event(1)
                     self.score += 50
                     self.score_count += 1
@@ -148,3 +163,6 @@ class Player(pygame.sprite.Sprite):
         
     def clear_score_count(self):
         self.score_count = 0
+    
+    def get_current_direction(self):
+        return self.player_direction.value

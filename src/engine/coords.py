@@ -37,3 +37,11 @@ class Coords:
         x_in_cell = int(x - self.start_board_x - coords[0]*self.cell_width)
         y_in_cell = int(y - self.start_board_y - coords[1]*self.cell_height)
         return x_in_cell, y_in_cell
+    
+    def get_x_in_cell(self, coords: tuple, x):
+        x_in_cell = int(x - self.start_board_x - coords[0]*self.cell_width)
+        return x_in_cell
+    
+    def get_y_in_cell(self, coords: tuple, y):
+        y_in_cell = int(y - self.start_board_y - coords[1]*self.cell_height)
+        return y_in_cell
