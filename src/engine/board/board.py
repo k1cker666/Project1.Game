@@ -1,10 +1,10 @@
 import json
 from engine.board import cell
-import pygame
-import config
+from engine import coords
 
 class Board:
     game_map: list
+    coords = coords.Coords()
     
     def __init__(self, level_name):
         file_path = str("././config/maps/"+level_name)
@@ -12,11 +12,6 @@ class Board:
         game_map_json = json.loads(file_map.read())
         file_map.close()
         self.game_map = game_map_json.copy()
-        self.screen_width = config.get_value('screen_width')
-        self.screen_height = config.get_value('screen_height')
-        self.cell_width = self.cell_height = self.screen_height / 20
-        self.start_x = self.screen_width/2 - self.cell_width*len(self.game_map[0])/2
-        self.start_y = self.screen_height/2 - self.cell_height*len(self.game_map)/2 + 3*self.screen_height/32
         self.load()
         
     def load(self):
@@ -42,9 +37,9 @@ class Board:
                     
     def draw(self, screen):
         for y, line in enumerate(self.game_map):
-            py = y*self.cell_width+self.start_y
+            py = self.coords.cells_to_pixels_y(y)
             for x, item in enumerate(line):
-                px = x*self.cell_width+self.start_x
+                px = self.coords.cells_to_pixels_x(x)
                 item.draw(screen, px, py)
         
     def find_start_cell(self):

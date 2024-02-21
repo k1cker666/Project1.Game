@@ -3,7 +3,7 @@ from engine.board import cell
 import pygame
 from enum import Enum, auto
 from engine import sprites
-from engine.board import board
+from engine import coords
 
 class PlayerDirection(Enum):
     stay = auto()
@@ -38,6 +38,8 @@ class Player(pygame.sprite.Sprite):
     score = 0
     current_x = int
     current_y = int
+    score_count = 0
+    coords = coords.Coords()
     
     def __init__(self):
         super().__init__()
@@ -48,10 +50,8 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
     
     def set_spawn_coord(self, start_cell_px, start_cell_py):
-        self.start_board_x = self.screen_width/2 - self.cell_width*15/2
-        self.start_board_y = self.screen_height/2 - self.cell_height*15/2 + 3*self.screen_height/32
-        self.rect.x = self.start_board_x + start_cell_px*self.cell_width
-        self.rect.y = self.start_board_y + start_cell_py*self.cell_height
+        self.rect.x = self.coords.cells_to_pixels_x(start_cell_px)
+        self.rect.y = self.coords.cells_to_pixels_y(start_cell_py)
           
     def draw(self, screen: pygame.surface.Surface):
         if self.player_direction == PlayerDirection.stay:
@@ -71,8 +71,8 @@ class Player(pygame.sprite.Sprite):
             screen.blit(self.image, (self.rect.x, self.rect.y))
                 
     def move(self):
-        left_board_x = self.start_board_x
-        up_board_y = self.start_board_y
+        left_board_x = self.coords.start_board_x
+        up_board_y = self.coords.start_board_y
         right_board_x = self.screen_width-left_board_x
         down_board_y = up_board_y + self.cell_height*15
         if self.player_direction == PlayerDirection.stay:
@@ -112,9 +112,7 @@ class Player(pygame.sprite.Sprite):
                 self.rect.y = down_board_y-40
                 
     def get_coord(self):
-        current_map_x = int((self.rect.x-self.start_board_x)//40)
-        current_map_y = int((self.rect.y-self.start_board_y)//40)
-        return ((current_map_x, current_map_y))
+        return ((self.coords.pixels_to_cells_xy(self.rect.x, self.rect.y)))
         
     def get_player_event(self, event):
         events = {
@@ -124,18 +122,18 @@ class Player(pygame.sprite.Sprite):
         return PlayerEvent(type_event=events[event], context={'coords': self.get_coord()})
     
     def interact(self, current_cell):
-        coords = self.get_coord()
-        x_in_cell = int(self.rect.x - self.start_board_x - coords[0]*40)
-        y_in_cell = int(self.rect.y - self.start_board_y - coords[1]*40)
+        x_in_cell, y_in_cell = self.coords.get_xy_in_cell(self.get_coord(), self.rect.x, self.rect.y)
         if isinstance(current_cell, cell.FoodCell):
             if self.player_direction == PlayerDirection.right or self.player_direction == PlayerDirection.left:
                 if x_in_cell in range(6, 9):
                     self.event = self.get_player_event(1)
                     self.score += 50
+                    self.score_count += 1
             if self.player_direction == PlayerDirection.up or self.player_direction == PlayerDirection.down:
                 if y_in_cell in range(6, 9):
                     self.event = self.get_player_event(1)
                     self.score += 50
+                    self.score_count += 1
                     
     def change_direction(self, direction):
         directions = {0: PlayerDirection.stay,
@@ -147,3 +145,6 @@ class Player(pygame.sprite.Sprite):
         
     def clear_event(self):
         self.event = self.get_player_event(0)
+        
+    def clear_score_count(self):
+        self.score_count = 0

@@ -11,7 +11,8 @@ import time
 class StateManager(Enum):
     in_menu = auto()
     game_process = auto()
-    level_complite_window = auto()
+    level_complete_window = auto()
+    pause = auto()
     
 class GameManager:
     clock = pygame.time.Clock()
@@ -53,8 +54,8 @@ class GameManager:
                         return
                     elif event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
-                            self.game_state = StateManager.in_menu
-                            self.player.change_direction(0)
+                            self.set_alpha_background(screen)
+                            self.game_state = StateManager.pause
                         if event.key == pygame.K_RIGHT:
                             self.player.change_direction(1)
                         if event.key == pygame.K_LEFT:
@@ -67,16 +68,24 @@ class GameManager:
                             self.board.admin_clear_food_cells()
                 if self.board.check_food_cells():
                     self.set_alpha_background(screen)
-                    self.game_state = StateManager.level_complite_window
-            if self.game_state == StateManager.level_complite_window:
-                self.turn_next_level(screen)
+                    self.game_state = StateManager.level_complete_window
+            if self.game_state == StateManager.level_complete_window:
+                self.call_complete_level_window(screen)
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_1:
-                            level_name = self.change_level(self.num)
-                            self.board = board.Board(level_name)
-                            start_cell_px, start_cell_py = self.board.find_start_cell()
-                            self.player.set_spawn_coord(start_cell_px, start_cell_py)
+                            self.turn_next_level()
+                        if event.key == pygame.K_2:
+                            self.restart_level()
+                        if event.key == pygame.K_3:
+                            self.game_state = StateManager.in_menu
+                    if event.type == pygame.QUIT:
+                        return
+            if self.game_state == StateManager.pause:
+                self.call_pause_game_window(screen)
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_1 or event.key == pygame.K_ESCAPE:
                             self.game_state = StateManager.game_process
                         if event.key == pygame.K_2:
                             self.game_state = StateManager.in_menu
@@ -106,7 +115,7 @@ class GameManager:
         
         hp_board = pygame.Surface((info_board_width, info_board_height))
         hp_board.fill((0, 0, 0))
-        hp_text = font.render('Healh', 1, (255, 255, 0))
+        hp_text = font.render('Health', 1, (255, 255, 0))
         hp_text_pos = hp_text.get_rect(center=(info_board_width//2, info_board_height//5))
         hp_board.blit(hp_text, hp_text_pos)
         
@@ -136,40 +145,88 @@ class GameManager:
                          (screen_width/2+int(screen_width/20), 55, info_board_width, info_board_height), 3)
                     
     def handle_player_event(self):
-        coords = self.player.get_coord()
         if self.player.event.type_event == player.PlayerEventType.FoodEvent:
             self.board.set_empty_cell(self.player.event.context['coords'])
             self.player.clear_event()
     
-    def turn_next_level(self, screen: pygame.surface.Surface):
+    def call_complete_level_window(self, screen: pygame.surface.Surface):
         self.player.change_direction(0)
         
         window_width = 300
         window_height = 150
-        level_complite_window = pygame.Surface((window_width, window_height))
-        level_complite_window.fill((0, 0, 0))
-        level_complite_window_pos = level_complite_window.get_rect(center=(config.get_value('screen_width')//2, config.get_value('screen_height')//2))
+        level_complete_window = pygame.Surface((window_width, window_height))
+        level_complete_window.fill((0, 0, 0))
+        level_complete_window_pos = level_complete_window.get_rect(center=(config.get_value('screen_width')//2, config.get_value('screen_height')//2))
         
-        font = pygame.font.Font('./fonts/BetterVCR.ttf',  int(window_height/8))
-        level_complite_text = font.render(f'Level {self.num} complite!', 1, (255, 255, 0))
-        level_complite_text_pos = level_complite_text.get_rect(center=(window_width//2, window_height/3))
-        level_complite_window.blit(level_complite_text, level_complite_text_pos)
+        font = pygame.font.Font('./fonts/BetterVCR.ttf',  int(window_height/7))
+        level_complete_text = font.render(f'Level {self.num} complete!', 1, (255, 255, 0))
+        level_complete_text_pos = level_complete_text.get_rect(center=(window_width//2, window_height/5))
+        level_complete_window.blit(level_complete_text, level_complete_text_pos)
         
         font_button = pygame.font.Font('./fonts/BetterVCR.ttf',  int(window_height/10))
         next_level = font_button.render('1. Next level', 1, (255, 255, 0))
-        next_level_pos = next_level.get_rect(center=(window_width//2, window_height*3/5))
-        level_complite_window.blit(next_level, next_level_pos)
+        next_level_pos = next_level.get_rect(center=(window_width//2, window_height*4/8))
+        level_complete_window.blit(next_level, next_level_pos)
+        
+        restart_level = font_button.render('2. Restart level', 1, (255, 255, 0))
+        restart_level_pos = restart_level.get_rect(center=(window_width//2, window_height*5/8))
+        level_complete_window.blit(restart_level, restart_level_pos)
+        
+        menu = font_button.render('3. Menu', 1, (255, 255, 0))
+        menu_pos = menu.get_rect(center=(window_width//2, window_height*6/8))
+        level_complete_window.blit(menu, menu_pos)
+        
+        screen.blit(level_complete_window, level_complete_window_pos)
+        pygame.draw.rect(screen, (255, 255, 0),
+                         (level_complete_window_pos.x, level_complete_window_pos.y, window_width, window_height), 3)
+    
+    def call_pause_game_window(self, screen: pygame.surface.Surface):
+        self.player.change_direction(0)
+        
+        window_width = 300
+        window_height = 150
+        level_complete_window = pygame.Surface((window_width, window_height))
+        level_complete_window.fill((0, 0, 0))
+        level_complete_window_pos = level_complete_window.get_rect(center=(config.get_value('screen_width')//2, config.get_value('screen_height')//2))
+        
+        font = pygame.font.Font('./fonts/BetterVCR.ttf',  int(window_height/7))
+        level_complete_text = font.render('Game paused', 1, (255, 255, 0))
+        level_complete_text_pos = level_complete_text.get_rect(center=(window_width//2, window_height/5))
+        level_complete_window.blit(level_complete_text, level_complete_text_pos)
+        
+        font_button = pygame.font.Font('./fonts/BetterVCR.ttf',  int(window_height/10))
+        resume = font_button.render('1. Resume', 1, (255, 255, 0))
+        resume_pos = resume.get_rect(center=(window_width//2, window_height*3/6))
+        level_complete_window.blit(resume, resume_pos)
         
         menu = font_button.render('2. Menu', 1, (255, 255, 0))
-        menu_pos = menu.get_rect(center=(window_width//2, window_height*4/5))
-        level_complite_window.blit(menu, menu_pos)
+        menu_pos = menu.get_rect(center=(window_width//2, window_height*4/6))
+        level_complete_window.blit(menu, menu_pos)
         
-        screen.blit(level_complite_window, level_complite_window_pos)
+        screen.blit(level_complete_window, level_complete_window_pos)
         pygame.draw.rect(screen, (255, 255, 0),
-                         (level_complite_window_pos.x, level_complite_window_pos.y, window_width, window_height), 3)
+                         (level_complete_window_pos.x, level_complete_window_pos.y, window_width, window_height), 3)
         
     def set_alpha_background(self, screen: pygame.surface.Surface):
         fon = pygame.Surface((650, 800))
         fon.fill((0, 0, 0))
         fon.set_alpha(100)
         screen.blit(fon, (0, 0))
+        
+    def turn_next_level(self):
+        level_name = self.change_level(self.num)
+        self.board = board.Board(level_name)
+        start_cell_px, start_cell_py = self.board.find_start_cell()
+        self.player.set_spawn_coord(start_cell_px, start_cell_py)
+        self.player.clear_score_count()
+        self.game_state = StateManager.game_process
+        
+    def restart_level(self):
+        self.num -= 1
+        self.player.score -= 50*self.player.score_count
+        self.player.clear_score_count()
+        level_name = self.change_level(self.num)
+        self.board = board.Board(level_name)
+        start_cell_px, start_cell_py = self.board.find_start_cell()
+        self.player.set_spawn_coord(start_cell_px, start_cell_py)
+        self.game_state = StateManager.game_process
