@@ -45,7 +45,8 @@ class GameManager:
                 screen.fill((0, 0, 0))
                 self.board.draw(screen)
                 self.player.draw(screen)
-                self.player.move(self.board.is_block_ahead(self.player.get_coord(), self.player.get_current_direction()))
+                self.player.move(self.board.is_block_ahead(self.player.get_coord(), self.player.get_current_direction()),
+                                 self.board.is_cross_ahead(self.player.get_coord(), self.player.get_current_direction()))
                 self.player.get_current_direction()
                 self.player.interact(self.board.get_cell(self.player.get_coord()))
                 self.handle_player_event()
@@ -58,13 +59,13 @@ class GameManager:
                             self.set_alpha_background(screen)
                             self.game_state = StateManager.pause
                         if event.key == pygame.K_RIGHT:
-                            self.player.change_direction(1)
-                        if event.key == pygame.K_LEFT:
                             self.player.change_direction(2)
-                        if event.key == pygame.K_DOWN:
+                        if event.key == pygame.K_LEFT:
                             self.player.change_direction(3)
-                        if event.key == pygame.K_UP:
+                        if event.key == pygame.K_DOWN:
                             self.player.change_direction(4)
+                        if event.key == pygame.K_UP:
+                            self.player.change_direction(5)
                         if event.key == pygame.K_0:
                             self.board.admin_clear_food_cells()
                 if self.board.check_food_cells():

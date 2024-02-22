@@ -31,6 +31,12 @@ class Board:
                 elif item == 3:
                     self.game_map[py][px] = cell.StartCell()
                     px += 1
+                elif item == 4:
+                    self.game_map[py][px] = cell.CrossFoodCell()
+                    px += 1
+                elif item == 5:
+                    self.game_map[py][px] = cell.CrossEmptyCell()
+                    px += 1
                 if px == len(self.game_map[0]):
                     px = 0
                     py += 1
@@ -52,12 +58,15 @@ class Board:
         return self.game_map[coords[1]][coords[0]]
     
     def set_empty_cell(self, coords):
-        self.game_map[coords[1]][coords[0]] = cell.EmptyCell()
+        if isinstance(self.game_map[coords[1]][coords[0]], cell.FoodCell):
+           self.game_map[coords[1]][coords[0]] = cell.EmptyCell()
+        if isinstance(self.game_map[coords[1]][coords[0]], cell.CrossFoodCell):
+           self.game_map[coords[1]][coords[0]] = cell.CrossEmptyCell()
         
     def check_food_cells(self):
         for line in self.game_map:
             for item in line:
-                if isinstance(item, cell.FoodCell):
+                if isinstance(item, (cell.FoodCell, cell.CrossFoodCell)):
                     return False
         return True
     
@@ -68,6 +77,8 @@ class Board:
             for item in line:
                 if isinstance(item, cell.FoodCell):
                     self.game_map[py][px] = cell.EmptyCell()
+                if isinstance(item, cell.CrossFoodCell):
+                    self.game_map[py][px] = cell.CrossEmptyCell()
                 px += 1
             py +=1
             px = 0
@@ -87,5 +98,25 @@ class Board:
             return True
         if direction == 5:
             if isinstance(self.game_map[coords[1]][coords[0]], cell.BlockCell):
+                return False
+            return True
+        
+    def is_cross_ahead(self, coords, direction):
+        if direction == 1:
+            return False
+        if direction == 2:
+            if isinstance(self.game_map[coords[1]][coords[0]+1], (cell.CrossFoodCell, cell.CrossEmptyCell)):
+                return False
+            return True
+        if direction == 3:
+            if isinstance(self.game_map[coords[1]][coords[0]], (cell.CrossFoodCell, cell.CrossEmptyCell)):
+                return False
+            return True
+        if direction == 4:
+            if isinstance(self.game_map[coords[1]+1][coords[0]], (cell.CrossFoodCell, cell.CrossEmptyCell)):
+                return False
+            return True
+        if direction == 5:
+            if isinstance(self.game_map[coords[1]][coords[0]], (cell.CrossFoodCell, cell.CrossEmptyCell)):
                 return False
             return True

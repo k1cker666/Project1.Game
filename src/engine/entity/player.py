@@ -11,6 +11,7 @@ class PlayerDirection(Enum):
     left = auto()
     down = auto()
     up = auto()
+    no_direction = auto()
     
 class PlayerEventType(Enum):
     NoEvent = auto()
@@ -32,7 +33,8 @@ class Player(pygame.sprite.Sprite):
     move_up = [sprites.player_up_1, sprites.player_up_2, sprites.player_up_3, sprites.player_up_2, sprites.player_up_1]
     count = 0
     speed = 2
-    player_direction = PlayerDirection.stay
+    player_direction = PlayerDirection.right
+    player_want_direction = PlayerDirection.no_direction
     event = PlayerEvent(type_event = PlayerEventType.NoEvent)
     helthpoints = 4
     score = 0
@@ -70,7 +72,7 @@ class Player(pygame.sprite.Sprite):
             self.image = self.move_up[self.count // 6]
             screen.blit(self.image, (self.rect.x, self.rect.y))
                 
-    def move(self, is_block_ahead: bool):
+    def move(self, is_block_ahead: bool, is_cross_ahead: bool):
         left_board_x = self.coords.start_board_x
         up_board_y = self.coords.start_board_y
         right_board_x = self.screen_width-left_board_x
@@ -92,6 +94,17 @@ class Player(pygame.sprite.Sprite):
             if not is_block_ahead:
                 self.rect.x -= self.coords.get_x_in_cell(coord, self.rect.x)
                 self.player_direction = PlayerDirection.stay
+            if not is_cross_ahead:
+                if self.player_want_direction == PlayerDirection.down:
+                    want_coord = (coord[0]+1, coord[0])
+                    if self.rect.x == self.coords.get_x_in_cell(want_coord, self.rect.x):
+                        self.player_direction = PlayerDirection.down
+                        self.player_want_direction = PlayerDirection.no_direction
+                if self.player_want_direction == PlayerDirection.up:
+                    want_coord = (coord[0]+1, coord[0])
+                    if self.rect.x == self.coords.get_x_in_cell(want_coord, self.rect.x):
+                        self.player_direction = PlayerDirection.up
+                        self.player_want_direction = PlayerDirection.no_direction
         if self.player_direction == PlayerDirection.left:
             if self.count >= 20:
                 self.count = 0
@@ -138,7 +151,7 @@ class Player(pygame.sprite.Sprite):
     
     def interact(self, current_cell):
         x_in_cell, y_in_cell = self.coords.get_xy_in_cell(self.get_coord(), self.rect.x, self.rect.y)
-        if isinstance(current_cell, cell.FoodCell):
+        if isinstance(current_cell, (cell.FoodCell, cell.CrossFoodCell)):
             if self.player_direction == PlayerDirection.right or self.player_direction == PlayerDirection.left:
                 if x_in_cell in range(0, 3):
                     self.event = self.get_player_event(1)
@@ -151,12 +164,12 @@ class Player(pygame.sprite.Sprite):
                     self.score_count += 1
                     
     def change_direction(self, direction):
-        directions = {0: PlayerDirection.stay,
-                      1: PlayerDirection.right,
-                      2: PlayerDirection.left,
-                      3: PlayerDirection.down,
-                      4: PlayerDirection.up}
-        self.player_direction = directions[direction]
+        directions = {1: PlayerDirection.stay,
+                      2: PlayerDirection.right,
+                      3: PlayerDirection.left,
+                      4: PlayerDirection.down,
+                      5: PlayerDirection.up}
+        self.player_want_direction = directions[direction]
         
     def clear_event(self):
         self.event = self.get_player_event(0)
