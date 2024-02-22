@@ -11,6 +11,7 @@ class PlayerDirection(Enum):
     left = auto()
     down = auto()
     up = auto()
+    no_direction = auto()
     
 class PlayerEventType(Enum):
     NoEvent = auto()
@@ -33,6 +34,7 @@ class Player(pygame.sprite.Sprite):
     count = 0
     speed = 2
     player_direction = PlayerDirection.stay
+    player_new_direction = PlayerDirection.no_direction
     event = PlayerEvent(type_event = PlayerEventType.NoEvent)
     helthpoints = 4
     score = 0
@@ -70,7 +72,7 @@ class Player(pygame.sprite.Sprite):
             self.image = self.move_up[self.count // 6]
             screen.blit(self.image, (self.rect.x, self.rect.y))
                 
-    def move(self, is_block_ahead: bool):
+    def move(self, rules: dict):
         left_board_x = self.coords.start_board_x
         up_board_y = self.coords.start_board_y
         right_board_x = self.screen_width-left_board_x
@@ -89,9 +91,14 @@ class Player(pygame.sprite.Sprite):
                 self.rect.x += self.speed
             if self.rect.x >= right_board_x-40:
                 self.rect.x = left_board_x
-            if not is_block_ahead:
+            if not rules['rule']:
                 self.rect.x -= self.coords.get_x_in_cell(coord, self.rect.x)
                 self.player_direction = PlayerDirection.stay
+            if rules['new_coords'] != None:
+                want_x = self.coords.get_x_in_cell(rules['new_coords'], self.rect.x)
+                if self.rect.x == want_x:
+                    self.player_new_direction = PlayerDirection.no_direction
+                    self.player_direction = PlayerDirection.down
         if self.player_direction == PlayerDirection.left:
             if self.count >= 20:
                 self.count = 0
@@ -100,7 +107,7 @@ class Player(pygame.sprite.Sprite):
                 self.rect.x -= self.speed
             if self.rect.x <= left_board_x:
                 self.rect.x = right_board_x-40
-            if not is_block_ahead:
+            if not rules['rule']:
                 self.rect.x = self.coords.cells_to_pixels_x(x_cell)
                 self.player_direction = PlayerDirection.stay
         if self.player_direction == PlayerDirection.down:
@@ -111,7 +118,7 @@ class Player(pygame.sprite.Sprite):
                 self.rect.y += self.speed
             if self.rect.y >= down_board_y-40:
                 self.rect.y = up_board_y
-            if not is_block_ahead:
+            if not rules['rule']:
                 self.rect.y -= self.coords.get_y_in_cell(coord, self.rect.y)
                 self.player_direction = PlayerDirection.stay
         if self.player_direction == PlayerDirection.up:
@@ -122,7 +129,7 @@ class Player(pygame.sprite.Sprite):
                 self.rect.y -= self.speed
             if self.rect.y <= up_board_y:
                 self.rect.y = down_board_y-40
-            if not is_block_ahead:
+            if not rules['rule']:
                 self.rect.y = self.coords.cells_to_pixels_y(y_cell)
                 self.player_direction = PlayerDirection.stay
                 
@@ -151,12 +158,15 @@ class Player(pygame.sprite.Sprite):
                     self.score_count += 1
                     
     def change_direction(self, direction):
-        directions = {0: PlayerDirection.stay,
-                      1: PlayerDirection.right,
-                      2: PlayerDirection.left,
-                      3: PlayerDirection.down,
-                      4: PlayerDirection.up}
-        self.player_direction = directions[direction]
+        directions = {1: PlayerDirection.stay,
+                      2: PlayerDirection.right,
+                      3: PlayerDirection.left,
+                      4: PlayerDirection.down,
+                      5: PlayerDirection.up}
+        self.player_new_direction = directions[direction]
+    
+    def hard_change_direction(self):
+        self.player_direction = PlayerDirection.stay
         
     def clear_event(self):
         self.event = self.get_player_event(0)
@@ -166,3 +176,6 @@ class Player(pygame.sprite.Sprite):
     
     def get_current_direction(self):
         return self.player_direction.value
+    
+    def get_new_direction(self):
+        return self.player_new_direction.value

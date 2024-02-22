@@ -72,20 +72,31 @@ class Board:
             py +=1
             px = 0
             
-    def is_block_ahead(self, coords, direction):
+    def is_block_ahead(self, coords, direction, new_direction):
+        if direction == 1:
+            if new_direction == 2:
+                if isinstance(self.game_map[coords[1]][coords[0]+1], (cell.EmptyCell, cell.FoodCell)):
+                    return {'rule': True, 
+                            'new_coords': ((coords[0]+1, coords[1]))}
         if direction == 2:
-            if isinstance(self.game_map[coords[1]][coords[0]+1], cell.BlockCell):
-                return False
-            return True
+            if new_direction == 6:
+                if isinstance(self.game_map[coords[1]][coords[0]+1], cell.BlockCell):
+                    return {'rule': False}
+                return {'rule': True}
+            if new_direction == 4:
+                for i in range(0, 2):
+                    if isinstance(self.game_map[(coords[1]+1)][coords[0]+i], (cell.EmptyCell, cell.FoodCell)):
+                        return {'rule': True,
+                                'new_coords': ((coords[0]+i, coords[1]+1))}
         if direction == 3:
             if isinstance(self.game_map[coords[1]][coords[0]], cell.BlockCell):
-                return False
-            return True
+                return {'rule': False}
+            return {'rule': True}
         if direction == 4:
             if isinstance(self.game_map[coords[1]+1][coords[0]], cell.BlockCell):
-                return False
-            return True
+                return {'rule': False}
+            return {'rule': True}
         if direction == 5:
             if isinstance(self.game_map[coords[1]][coords[0]], cell.BlockCell):
-                return False
-            return True
+                return {'rule': False}
+            return {'rule': True}
