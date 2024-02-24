@@ -82,24 +82,29 @@ class Board:
                 px += 1
             py +=1
             px = 0
-            
-    def is_block_ahead(self, coords, direction):
-        if direction == 2:
-            if isinstance(self.game_map[coords[1]][coords[0]+1], cell.BlockCell):
-                return False
-            return True
-        if direction == 3:
-            if isinstance(self.game_map[coords[1]][coords[0]], cell.BlockCell):
-                return False
-            return True
-        if direction == 4:
-            if isinstance(self.game_map[coords[1]+1][coords[0]], cell.BlockCell):
-                return False
-            return True
-        if direction == 5:
-            if isinstance(self.game_map[coords[1]][coords[0]], cell.BlockCell):
-                return False
-            return True
+
+    #TODO: поменять direction на enum, enum вынести. называем -> Direction
+    def is_block_ahead(self):
+        def check(coords, direction):
+            x, y = coords[0], coords[1]
+            if direction == 2:
+                print(f"Checking block at coordinates: ({x+1}, {y})")
+                return isinstance(self.game_map[y][x+1], cell.BlockCell)
+            elif direction == 3:
+                print(f"Checking block at coordinates: ({x}, {y})")
+                return isinstance(self.game_map[y][x], cell.BlockCell)
+            elif direction == 4:
+                print(f"Checking block at coordinates: ({x}, {y+1})")
+                return isinstance(self.game_map[y+1][x], cell.BlockCell)
+            elif direction == 5:
+                print(f"Checking block at coordinates: ({x}, {y})")
+                return isinstance(self.game_map[y][x], cell.BlockCell)
+            else:
+                print("Invalid direction value")
+                return False  # Добавлено для обработки неправильного значения direction
+
+        return lambda coords, direction: check(coords, direction)
+
         
     def is_cross_ahead(self, coords, direction):
         if direction == 1:

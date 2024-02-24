@@ -17,21 +17,20 @@ class StateManager(Enum):
 class GameManager:
     clock = pygame.time.Clock()
     game_state = StateManager.in_menu
-    num = 0
+    num = 0 #TODO: rename num to level_num 
     
     def __init__(self):
         self.FPS = config.get_value('FPS')
         level_name = self.change_level(self.num)
         self.board = board.Board(level_name)
         self.player = player.Player()
-        start_cell_px, start_cell_py = self.board.find_start_cell()
-        self.player.set_spawn_coord(start_cell_px, start_cell_py)
-        self.image = sprites.Image
-                
+        self.player.set_spawn_coord(self.board.find_start_cell())
+        self.image = sprites.Image #TODO: не использовать объект внутри класса, использовать глобально sprites.Image.bla-bla
+
+    # TODO: Разбить run на функции
     def run(self, screen: pygame.surface.Surface):
         while True:
             if self.game_state == StateManager.in_menu:
-                screen.blit(self.image.background, (0, 0))
                 menu.print_menu(screen)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -41,15 +40,17 @@ class GameManager:
                             self.game_state = StateManager.game_process
                         if event.key == pygame.K_3:
                             return 
+
             if self.game_state == StateManager.game_process:
                 screen.fill((0, 0, 0))
                 self.board.draw(screen)
                 self.player.draw(screen)
-                self.player.move(self.board.is_block_ahead(self.player.get_coord(), self.player.get_current_direction()),
-                                 self.board.is_cross_ahead(self.player.get_coord(), self.player.get_current_direction()))
-                self.player.get_current_direction()
+                self.player.move(self.board.is_block_ahead())
+
                 self.player.interact(self.board.get_cell(self.player.get_coord()))
+
                 self.handle_player_event()
+
                 self.draw_game_info(screen)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -59,6 +60,7 @@ class GameManager:
                             self.set_alpha_background(screen)
                             self.game_state = StateManager.pause
                         if event.key == pygame.K_RIGHT:
+                            #Передаем enum
                             self.player.change_direction(2)
                         if event.key == pygame.K_LEFT:
                             self.player.change_direction(3)
@@ -68,10 +70,14 @@ class GameManager:
                             self.player.change_direction(5)
                         if event.key == pygame.K_0:
                             self.board.admin_clear_food_cells()
+
                 if self.board.check_food_cells():
                     self.set_alpha_background(screen)
                     self.game_state = StateManager.level_complete_window
+                
             if self.game_state == StateManager.level_complete_window:
+                self.player.change_direction(1)
+                # Вынести в отдельный файл и передавать руками что-то
                 self.call_complete_level_window(screen)
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
@@ -84,6 +90,7 @@ class GameManager:
                     if event.type == pygame.QUIT:
                         return
             if self.game_state == StateManager.pause:
+                self.player.change_direction(1)
                 self.call_pause_game_window(screen)
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
@@ -96,12 +103,8 @@ class GameManager:
             pygame.display.flip()
             self.clock.tick(self.FPS)
 
-    def change_level(self, num):
-        level_list = config.get_value('levels')
-        level_name = level_list[num]['map_file']
-        self.num +=1
-        return level_name
-        
+
+    #TODO: функции которые просто рисуют выносим
     def draw_game_info(self, screen: pygame.surface.Surface):
         screen_width = config.get_value('screen_width')
         screen_height = config.get_value('screen_height')
@@ -150,10 +153,9 @@ class GameManager:
         if self.player.event.type_event == player.PlayerEventType.FoodEvent:
             self.board.set_empty_cell(self.player.event.context['coords'])
             self.player.clear_event()
-    
+
+    #TODO: функции которые просто рисуют выносим
     def call_complete_level_window(self, screen: pygame.surface.Surface):
-        self.player.change_direction(0)
-        
         window_width = 300
         window_height = 150
         level_complete_window = pygame.Surface((window_width, window_height))
@@ -183,8 +185,6 @@ class GameManager:
                          (level_complete_window_pos.x, level_complete_window_pos.y, window_width, window_height), 3)
     
     def call_pause_game_window(self, screen: pygame.surface.Surface):
-        self.player.change_direction(0)
-        
         window_width = 300
         window_height = 150
         level_complete_window = pygame.Surface((window_width, window_height))
@@ -214,7 +214,15 @@ class GameManager:
         fon.fill((0, 0, 0))
         fon.set_alpha(100)
         screen.blit(fon, (0, 0))
-        
+
+    # три реализации: init_level(вызываем в конструкторе), restart_level и turn_next_level
+    # change_level -> get_level
+    def change_level(self, num):
+        level_list = config.get_value('levels')
+        level_name = level_list[num]['map_file']
+        self.num +=1
+        return level_name
+
     def turn_next_level(self):
         level_name = self.change_level(self.num)
         self.board = board.Board(level_name)
@@ -224,8 +232,8 @@ class GameManager:
         self.game_state = StateManager.game_process
         
     def restart_level(self):
-        self.num -= 1
-        self.player.score -= 50*self.player.score_count
+        self.num -= 1 
+        self.player.score -= self.player.score_count
         self.player.clear_score_count()
         level_name = self.change_level(self.num)
         self.board = board.Board(level_name)

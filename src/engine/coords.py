@@ -1,6 +1,4 @@
 class Coords:
-    cells: int
-    pixels: int
     screen_width = 650
     screen_height = 800
     cell_width = cell_height = screen_height/20
