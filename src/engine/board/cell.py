@@ -2,7 +2,6 @@ from pygame import Surface
 from engine import sprites
 
 class Cell():
-    sprites = sprites.Image
         
     def __init__(self):
         pass
@@ -12,7 +11,7 @@ class Cell():
     
 class EmptyCell(Cell):
     def __init__(self):
-        self.image = self.sprites.empty_cell
+        self.image = sprites.Sprites.empty_cell
         self.rect = self.image.get_rect()
     
     def draw(self, screen: Surface, px, py):
@@ -20,7 +19,7 @@ class EmptyCell(Cell):
 
 class FoodCell(Cell):
     def __init__(self):
-        self.image = self.sprites.food_cell
+        self.image = sprites.Sprites.food_cell
         self.rect = self.image.get_rect()
     
     def draw(self, screen: Surface, px, py):
@@ -28,7 +27,7 @@ class FoodCell(Cell):
     
 class BlockCell(Cell):
     def __init__(self):
-        self.image = self.sprites.block_cell
+        self.image = sprites.Sprites.block_cell
         self.rect = self.image.get_rect()
     
     def draw(self, screen: Surface, px, py):
@@ -36,28 +35,8 @@ class BlockCell(Cell):
         
 class StartCell(Cell):
     def __init__(self):
-        self.image = self.sprites.empty_cell
+        self.image = sprites.Sprites.empty_cell
         self.rect = self.image.get_rect()
     
     def draw(self, screen: Surface, px, py):
         screen.blit(self.image, (px, py))
-            
-class CrossEmptyCell(Cell):
-    def __init__(self):
-        self.image = self.sprites.empty_cell
-        self.image.set_colorkey((0, 0, 0))
-        self.rect = self.image.get_rect()
-    
-    def draw(self, screen: Surface, px, py):
-        screen.blit(self.image, (px, py))
-
-class CrossFoodCell(Cell):
-    def __init__(self):
-        self.image = self.sprites.food_cell
-        self.image.set_colorkey((0, 0, 0))
-        self.rect = self.image.get_rect()
-    
-    def draw(self, screen: Surface, px, py):
-        screen.blit(self.image, (px, py))
-        
-    

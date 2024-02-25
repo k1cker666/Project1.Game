@@ -5,8 +5,7 @@ def load_image(image_name):
     result.set_colorkey((255, 255, 255))
     return result 
 
-#TODO: Image -> Spirtes
-class Image:
+class Sprites:
     background = pygame.image.load('./images/testbg.png')
     block_cell = pygame.image.load('./images/sprites/BlockCell.png')
     empty_cell = pygame.image.load('./images/sprites/EmptyCell.png')
@@ -32,3 +31,8 @@ class Image:
     player_up_1 = load_image('./images/sprites/player/Up_1.png')
     player_up_2 = load_image('./images/sprites/player/Up_2.png')
     player_up_3 = load_image('./images/sprites/player/Up_3.png')
+    
+    move_right = [player_right_1, player_right_2, player_right_3, player_right_2, player_right_1]
+    move_left = [player_left_1, player_left_2, player_left_3, player_left_2, player_left_1]
+    move_down = [player_down_1, player_down_2, player_down_3, player_down_2, player_down_1]
+    move_up = [player_up_1, player_up_2, player_up_3, player_up_2, player_up_1]
