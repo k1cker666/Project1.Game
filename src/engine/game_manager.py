@@ -6,7 +6,8 @@ import config
 from engine.entity import player
 from engine.entity import direction
 from interface import Interface
-
+from engine.entity import enemy
+from engine.entity import enemyname
 
 class StateManager(Enum):
     in_menu = auto()
@@ -27,7 +28,15 @@ class GameManager:
         level_name = self.get_level(self.level_num)
         self.board = board.Board(level_name)
         self.player = player.Player()
-        self.player.set_spawn_coord(self.board.find_start_cell())
+        self.player.set_spawn_coord(self.board.get_player_start_cell())
+        self.blinky = enemy.Enemy(enemyname.EnemyName.Blinky)
+        self.clyde = enemy.Enemy(enemyname.EnemyName.Clyde)
+        self.inky = enemy.Enemy(enemyname.EnemyName.Inky)
+        self.pinky = enemy.Enemy(enemyname.EnemyName.Pinky)
+        self.enemies = [self.blinky, self.clyde, self.inky, self.pinky]
+        for unit in self.enemies:
+            unit.create_unit()
+            unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.name))
 
     def run(self, screen: pygame.surface.Surface):
         while True:
@@ -66,6 +75,8 @@ class GameManager:
         screen.fill((0, 0, 0))
         self.board.draw(screen)
         self.player.draw(screen)
+        for unit in self.enemies:
+            unit.draw(screen)
         self.player.move(self.board.is_block_ahead())
         self.player.interact(self.board.get_cell(self.player.get_coord()))
         self.handle_player_event()
@@ -141,7 +152,7 @@ class GameManager:
         self.level_num +=1
         level_name = self.get_level(self.level_num)
         self.board = board.Board(level_name)
-        self.player.set_spawn_coord(self.board.find_start_cell())
+        self.player.set_spawn_coord(self.board.get_player_start_cell())
         self.player.clear_curr_level_score()
         self.game_state = StateManager.game_process
         
@@ -150,7 +161,7 @@ class GameManager:
         self.player.clear_curr_level_score()
         level_name = self.get_level(self.level_num)
         self.board = board.Board(level_name)
-        self.player.set_spawn_coord(self.board.find_start_cell())
+        self.player.set_spawn_coord(self.board.get_player_start_cell())
         self.game_state = StateManager.game_process
         
     def check_levels(self):

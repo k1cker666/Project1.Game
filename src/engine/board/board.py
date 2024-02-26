@@ -2,6 +2,7 @@ import json
 from engine.board import cell
 from engine import coords
 from engine.entity import direction
+from engine.entity import enemyname
 
 class Board:
     game_map: list
@@ -32,6 +33,9 @@ class Board:
                 elif item == 3:
                     self.game_map[py][px] = cell.StartCell()
                     px += 1
+                elif item == 4:
+                    self.game_map[py][px] = cell.EnemyStartCell()
+                    px += 1
                 if px == len(self.game_map[0]):
                     px = 0
                     py += 1
@@ -43,7 +47,7 @@ class Board:
                 px = self.coords.cells_to_pixels_x(x)
                 item.draw(screen, px, py)
         
-    def find_start_cell(self):
+    def get_player_start_cell(self):
         for py in range(len(self.game_map)):
             for px in range(len(self.game_map[py])):
                 if isinstance(self.game_map[py][px], cell.StartCell):
@@ -89,3 +93,25 @@ class Board:
                 return False
 
         return lambda coords, curr_direction: check(coords, curr_direction)
+    
+    def get_enemy_start_cell(self, name):
+        if name == enemyname.EnemyName.Blinky:
+            for py in range(0, 8):
+                for px in range(0, 8):
+                    if isinstance(self.game_map[py][px], cell.EnemyStartCell):
+                        return ((px, py))
+        if name == enemyname.EnemyName.Clyde:
+            for py in range(0, 8):
+                for px in range(8, 15):
+                    if isinstance(self.game_map[py][px], cell.EnemyStartCell):
+                        return ((px, py))
+        if name == enemyname.EnemyName.Inky:
+            for py in range(7, 15):
+                for px in range(0, 8):
+                    if isinstance(self.game_map[py][px], cell.EnemyStartCell):
+                        return ((px, py))
+        if name == enemyname.EnemyName.Pinky:
+            for py in range(7, 15):
+                for px in range(7, 15):
+                    if isinstance(self.game_map[py][px], cell.EnemyStartCell):
+                        return ((px, py))

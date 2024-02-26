@@ -40,3 +40,11 @@ class StartCell(Cell):
     
     def draw(self, screen: Surface, px, py):
         screen.blit(self.image, (px, py))
+        
+class EnemyStartCell(Cell):
+    def __init__(self):
+        self.image = sprites.Sprites.empty_cell
+        self.rect = self.image.get_rect()
+    
+    def draw(self, screen: Surface, px, py):
+        screen.blit(self.image, (px, py))

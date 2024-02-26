@@ -18,7 +18,7 @@ class PlayerEvent:
         self.type_event = type_event
         self.context = context
         
-class Player(pygame.sprite.Sprite):
+class Player:
     
     speed = 2
 
@@ -37,7 +37,6 @@ class Player(pygame.sprite.Sprite):
     ticks_for_animation = 0
 
     def __init__(self):
-        super().__init__()
         self.screen_width = config.get_value('screen_width')
         self.screen_height = config.get_value('screen_height')
         self.cell_width = self.cell_height = self.screen_height/20
