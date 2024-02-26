@@ -1,18 +1,21 @@
 import json
-from engine.board  import cell
-import pygame
-import config
-
+from engine.board import cell
+from engine import coords
+from engine.entity import direction
 
 class Board:
     game_map: list
+    coords = coords.Coords()
     
-    def load(self, level_name):
+    def __init__(self, level_name):
         file_path = str("././config/maps/"+level_name)
         file_map = open(file_path, 'r')
-        game_map = json.loads(file_map.read()) # game_map хочется чтобы не изменялся
+        game_map_json = json.loads(file_map.read())
         file_map.close()
-        self.game_map = game_map.copy()
+        self.game_map = game_map_json.copy()
+        self.load()
+        
+    def load(self):
         px = 0
         py = 0
         for line in self.game_map:
@@ -26,19 +29,63 @@ class Board:
                 elif item == 2:
                     self.game_map[py][px] = cell.FoodCell()
                     px += 1
-                if px == len(game_map[0]):
+                elif item == 3:
+                    self.game_map[py][px] = cell.StartCell()
+                    px += 1
+                if px == len(self.game_map[0]):
                     px = 0
                     py += 1
                     
     def draw(self, screen):
-        screen_width = config.get_value('screen_width')
-        screen_height = config.get_value('screen_height')
-        cell_width = cell_height = screen_height / 20
-        start_x = screen_width/2 - cell_width*len(self.game_map[0])/2
-        start_y = screen_height/2 - cell_height*len(self.game_map)/2
         for y, line in enumerate(self.game_map):
-            py = y*cell_width+start_y
+            py = self.coords.cells_to_pixels_y(y)
             for x, item in enumerate(line):
-                px = x*cell_width+start_x
+                px = self.coords.cells_to_pixels_x(x)
                 item.draw(screen, px, py)
-        pygame.display.flip()
+        
+    def find_start_cell(self):
+        for py in range(len(self.game_map)):
+            for px in range(len(self.game_map[py])):
+                if isinstance(self.game_map[py][px], cell.StartCell):
+                    return ((px, py))
+    
+    def get_cell(self, coords):
+        return self.game_map[coords[1]][coords[0]]
+    
+    def set_empty_cell(self, coords):
+        if isinstance(self.game_map[coords[1]][coords[0]], cell.FoodCell):
+           self.game_map[coords[1]][coords[0]] = cell.EmptyCell()
+        
+    def check_food_cells(self):
+        for line in self.game_map:
+            for item in line:
+                if isinstance(item, cell.FoodCell):
+                    return False
+        return True
+    
+    def admin_clear_food_cells(self):
+        py = 0
+        px = 0
+        for line in self.game_map:
+            for item in line:
+                if isinstance(item, cell.FoodCell):
+                    self.game_map[py][px] = cell.EmptyCell()
+                px += 1
+            py +=1
+            px = 0
+
+    def is_block_ahead(self):
+        def check(coords, curr_direction):
+            x, y = coords[0], coords[1]
+            if curr_direction == direction.Direction.right:
+                return isinstance(self.game_map[y][x+1], cell.BlockCell)
+            elif curr_direction == direction.Direction.left:
+                return isinstance(self.game_map[y][x], cell.BlockCell)
+            elif curr_direction == direction.Direction.down:
+                return isinstance(self.game_map[y+1][x], cell.BlockCell)
+            elif curr_direction == direction.Direction.up:
+                return isinstance(self.game_map[y][x], cell.BlockCell)
+            else:
+                return False
+
+        return lambda coords, curr_direction: check(coords, curr_direction)

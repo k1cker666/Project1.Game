@@ -1,30 +1,42 @@
-import pygame
-import config
+from pygame import Surface 
+from engine import sprites
 
-class Cell:
-    cell_sprite_sheet = pygame.image.load('./images/sprites.png')
-    
+class Cell():
+        
     def __init__(self):
-        self.cell_width = config.get_value('cell_width')
-        self.cell_height = config.get_value('cell_height')
+        pass
     
     def draw():
         pass
     
 class EmptyCell(Cell):
-    def draw(self, screen, px, py):
-        image = pygame.Surface((self.cell_width, self.cell_height))
-        image.blit(self.cell_sprite_sheet, (0, 0), (0, 0, 40, 40))
-        screen.blit(image, (px, py))
+    def __init__(self):
+        self.image = sprites.Sprites.empty_cell
+        self.rect = self.image.get_rect()
+    
+    def draw(self, screen: Surface, px, py):
+        screen.blit(self.image, (px, py))
 
 class FoodCell(Cell):
-    def draw(self, screen, px, py):
-        image = pygame.Surface((self.cell_width, self.cell_height))
-        image.blit(self.cell_sprite_sheet, (0, 0), (40, 0, 80, 40))
-        screen.blit(image, (px, py))
+    def __init__(self):
+        self.image = sprites.Sprites.food_cell
+        self.rect = self.image.get_rect()
+    
+    def draw(self, screen: Surface, px, py):
+        screen.blit(self.image, (px, py))
     
 class BlockCell(Cell):
-    def draw(self, screen, px, py):
-        image = pygame.Surface((self.cell_width, self.cell_height))
-        image.blit(self.cell_sprite_sheet, (0, 0), (80, 0, 120, 40))
-        screen.blit(image, (px, py))
+    def __init__(self):
+        self.image = sprites.Sprites.block_cell
+        self.rect = self.image.get_rect()
+    
+    def draw(self, screen: Surface, px, py):
+        screen.blit(self.image, (px, py))
+        
+class StartCell(Cell):
+    def __init__(self):
+        self.image = sprites.Sprites.empty_cell
+        self.rect = self.image.get_rect()
+    
+    def draw(self, screen: Surface, px, py):
+        screen.blit(self.image, (px, py))
