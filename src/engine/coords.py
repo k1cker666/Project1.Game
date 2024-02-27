@@ -43,3 +43,8 @@ class Coords:
     def get_y_in_cell(self, coords: tuple, y):
         y_in_cell = int(y - self.start_board_y - coords[1]*self.cell_height)
         return y_in_cell
+    
+    def get_area_from_coords(self, coords):
+        x = coords[0]
+        y = coords[1]
+        

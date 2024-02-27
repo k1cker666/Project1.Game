@@ -129,8 +129,7 @@ class Board:
                     directions.append(direction.Direction.up)
                 if not isinstance(self.game_map[y+1][x], cell.BlockCell):
                     directions.append(direction.Direction.down)
-                return directions
-                    
+                
             if past_direction == direction.Direction.right:
                 if not isinstance(self.game_map[y-1][x], cell.BlockCell):
                     directions.append(direction.Direction.up)
@@ -138,8 +137,6 @@ class Board:
                     directions.append(direction.Direction.down)
                 if len(directions) == 0:
                     return ([direction.Direction.left])
-                else:
-                    return directions
                  
             elif past_direction == direction.Direction.left:
                 if not isinstance(self.game_map[y-1][x], cell.BlockCell):
@@ -148,8 +145,6 @@ class Board:
                     directions.append(direction.Direction.down)
                 if len(directions) == 0:
                     return ([direction.Direction.right])
-                else:
-                    return directions
                  
             elif past_direction == direction.Direction.down:
                 if not isinstance(self.game_map[y][x+1], cell.BlockCell):
@@ -158,8 +153,6 @@ class Board:
                     directions.append(direction.Direction.left)
                 if len(directions) == 0:
                     return ([direction.Direction.up])
-                else:
-                    return directions
                  
             elif past_direction == direction.Direction.up:
                 if not isinstance(self.game_map[y][x+1], cell.BlockCell):
@@ -168,7 +161,6 @@ class Board:
                     directions.append(direction.Direction.left)
                 if len(directions) == 0:
                     return ([direction.Direction.down])
-                else:
-                    return directions
+            return directions
 
         return lambda coords, past_direction: check(coords, past_direction)

@@ -5,10 +5,13 @@ from enum import Enum, auto
 from engine import sprites
 from engine import coords
 from engine.entity import direction
+
+#TODO: сделать ивент столкновения
     
 class PlayerEventType(Enum):
     NoEvent = auto()
     FoodEvent = auto()
+    EnemyAttack = auto()
 
 class PlayerEvent:
     type_event: PlayerEventType
@@ -72,8 +75,6 @@ class Player:
 
     def move(self, is_block_ahead):
         coord = self.get_coord()
-        x_cell = coord[0]+1
-        y_cell = coord[1]+1
         
         self.calculate_ticks_for_animation()
 
@@ -91,7 +92,6 @@ class Player:
             return
 
         if self.player_direction == direction.Direction.right:
-
             self.rect.x += self.speed
     
             if self.player_want_direction == direction.Direction.left:
@@ -103,7 +103,6 @@ class Player:
                 self.player_direction = direction.Direction.stay
 
         if self.player_direction == direction.Direction.left:
-            
             self.rect.x -= self.speed
             
             if self.player_want_direction == direction.Direction.right:
@@ -125,7 +124,6 @@ class Player:
                 self.player_direction = direction.Direction.stay
 
         if self.player_direction == direction.Direction.up:
-
             self.rect.y -= self.speed
 
             if self.player_want_direction == direction.Direction.down:
@@ -135,7 +133,7 @@ class Player:
             if  is_block and self.coords.get_y_in_cell(coord, self.rect.y) == 0:
                 self.player_direction = direction.Direction.stay
 
-    def interact(self, current_cell):
+    def interact_cell(self, current_cell):
         x_in_cell, y_in_cell = self.coords.get_xy_in_cell(self.get_coord(), self.rect.x, self.rect.y)
         if isinstance(current_cell, cell.FoodCell):
             if self.player_direction == direction.Direction.right or self.player_direction == direction.Direction.left:
@@ -149,10 +147,13 @@ class Player:
                     self.total_score += 50
                     self.curr_level_score += 50
 
+    # def interact_enemy(self):
+    
     def get_player_event(self, event):
         events = {
             0: PlayerEventType.NoEvent,
-            1: PlayerEventType.FoodEvent
+            1: PlayerEventType.FoodEvent,
+            2: PlayerEventType.EnemyAttack
         }
         return PlayerEvent(type_event=events[event], context={'coords': self.get_coord()})
     

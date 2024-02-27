@@ -4,6 +4,7 @@ from engine import coords
 from engine.entity import direction
 from engine.entity import enemyname
 from random import choice
+#TODO: ограничить область передвижения
 
 class Enemy:
     coords = coords.Coords()
@@ -102,11 +103,17 @@ class Enemy:
 
             x_start_cell = self.coords.get_x_in_cell(coords, self.rect.x)
             y_start_cell = self.coords.get_y_in_cell(coords, self.rect.y)
+            
+            main_condirion = is_block(coords, self.enemy_direction) and x_start_cell == 0 and y_start_cell == 0
 
             if self.enemy_direction == direction.Direction.no_direction:
                 self.enemy_direction = choice(free_diretnion(coords, self.enemy_past_direction))
 
-            if is_block(coords, self.enemy_direction) and x_start_cell == 0 and y_start_cell == 0:
+            if self.addit_conditions() and x_start_cell == 0 and y_start_cell == 0:
+                self.enemy_past_direction = self.enemy_direction
+                self.enemy_direction = choice(free_diretnion(coords, self.enemy_past_direction))
+            
+            if main_condirion:
                 self.enemy_past_direction = self.enemy_direction
                 self.enemy_direction = choice(free_diretnion(coords, self.enemy_past_direction))
 
@@ -121,6 +128,44 @@ class Enemy:
 
             if self.enemy_direction == direction.Direction.up:
                 self.rect.y -= self.speed
-    
+
+    def addit_conditions(self):
+        coords = self.get_coord()
+        if self.name == enemyname.EnemyName.Blinky:
+            if self.enemy_direction == direction.Direction.right:
+                if coords[0] >= 7:
+                    return True
+            if self.enemy_direction == direction.Direction.down:
+                if coords[1] >= 7:
+                    return True
+        
+        if self.name == enemyname.EnemyName.Clyde:
+            if self.enemy_direction == direction.Direction.left:
+                if coords[0] <= 7:
+                    return True
+            if self.enemy_direction == direction.Direction.down:
+                if coords[1] >= 7:
+                    return True
+                
+        if self.name == enemyname.EnemyName.Inky:
+            if self.enemy_direction == direction.Direction.right:
+                if coords[0] >= 7:
+                    return True
+            if self.enemy_direction == direction.Direction.up:
+                if coords[1] <= 7:
+                    return True
+                
+        if self.name == enemyname.EnemyName.Pinky:
+            if self.enemy_direction == direction.Direction.left:
+                if coords[0] <= 7:
+                    return True
+            if self.enemy_direction == direction.Direction.up:
+                if coords[1] <= 7:
+                    return True
+        return False
+        
     def clear_delay_timer(self):
         self.delay_timer = 0
+        
+    def get_xy_coord(self):
+        return ((self.rect.x, self.rect.y))

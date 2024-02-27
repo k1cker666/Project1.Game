@@ -78,11 +78,11 @@ class GameManager:
         screen.fill((0, 0, 0))
         self.board.draw(screen)
         self.player.draw(screen)
+        self.player.move(self.board.is_block_ahead())
         for unit in self.enemies:
             unit.draw(screen)
             unit.move(self.board.is_block_ahead(), self.board.get_free_direction())
-        self.player.move(self.board.is_block_ahead())
-        self.player.interact(self.board.get_cell(self.player.get_coord()))
+        self.player.interact_cell(self.board.get_cell(self.player.get_coord()))
         self.handle_player_event()
         self.interface.draw_game_info(screen, self.level_num, self.player.helthpoints, self.player.total_score)
         for event in pygame.event.get():
