@@ -77,11 +77,13 @@ class GameManager:
     def game_initialization(self, screen: pygame.surface.Surface):
         screen.fill((0, 0, 0))
         self.board.draw(screen)
-        self.player.draw(screen)
-        self.player.move(self.board.is_block_ahead())
+        
         for unit in self.enemies:
             unit.draw(screen)
             unit.move(self.board.is_block_ahead(), self.board.get_free_direction())
+            self.player.interact_enemy(unit.get_rect_xy())
+        self.player.draw(screen)
+        self.player.move(self.board.is_block_ahead())
         self.player.interact_cell(self.board.get_cell(self.player.get_coord()))
         self.handle_player_event()
         self.interface.draw_game_info(screen, self.level_num, self.player.helthpoints, self.player.total_score)
@@ -157,7 +159,7 @@ class GameManager:
         self.player.clear_curr_level_score()
         for unit in self.enemies:
             unit.clear_delay_timer()
-            unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.name))
+            unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.area))
         self.game_state = StateManager.game_process
         
     def restart_level(self):
@@ -165,7 +167,7 @@ class GameManager:
         self.player.clear_curr_level_score()
         for unit in self.enemies:
             unit.clear_delay_timer()
-            unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.name))
+            unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.area))
         level_name = self.get_level(self.level_num)
         self.board = board.Board(level_name)
         self.player.set_spawn_coord(self.board.get_player_start_cell())

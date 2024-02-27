@@ -167,6 +167,9 @@ class Enemy:
                 if coords[1] <= 7:
                     return True
         return False
+    
+    def get_rect_xy(self):
+        return self.rect.x, self.rect.y
         
     def clear_delay_timer(self):
         self.delay_timer = 0

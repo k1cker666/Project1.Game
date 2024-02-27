@@ -32,6 +32,8 @@ class Player:
     player_direction = direction.Direction.stay
     player_want_direction = direction.Direction.no_direction
     
+    player_state = PlayerState.vulnerable
+    
     event = PlayerEvent(type_event = PlayerEventType.NoEvent)
     
     helthpoints = 4
@@ -41,6 +43,7 @@ class Player:
 
     coords = coords.Coords()
 
+    invulnerable_timer = 0
     ticks_for_animation = 0
     
     player_anim = sprites.Sprites.player_animation
@@ -149,8 +152,21 @@ class Player:
                     self.total_score += 50
                     self.curr_level_score += 50
 
-    # def interact_enemy(self):
-    
+    def interact_enemy(self, enemy_coords):
+        enemy_x, enemy_y = enemy_coords
+        if self.player_state == PlayerState.vulnerable and self.rect.x - enemy_x == 0 and self.rect.y - enemy_y == 0:
+                print('attack!')
+                self.helthpoints -= 1
+                self.player_state = PlayerState.invulnerable
+        if self.player_state == PlayerState.invulnerable:
+            if self.invulnerable_timer == 160:
+                self.invulnerable_timer = 0
+                self.player_state = PlayerState.vulnerable
+                print('one more time')
+            else:
+                self.invulnerable_timer += 1
+            
+        
     def get_player_event(self, event):
         events = {
             0: PlayerEventType.NoEvent,
