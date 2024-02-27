@@ -7,7 +7,7 @@ from engine.entity import player
 from engine.entity import direction
 from interface import Interface
 from engine.entity import enemy
-from engine.entity import enemyname
+from engine.entity import area
 
 class StateManager(Enum):
     in_menu = auto()
@@ -49,14 +49,14 @@ class GameManager:
             self.clock.tick(self.FPS)
                     
     def enemy_innit(self):
-        self.blinky = enemy.Enemy(enemyname.EnemyName.Blinky)
-        self.clyde = enemy.Enemy(enemyname.EnemyName.Clyde)
-        self.inky = enemy.Enemy(enemyname.EnemyName.Inky)
-        self.pinky = enemy.Enemy(enemyname.EnemyName.Pinky)
+        self.blinky = enemy.Enemy(area.Area.areaA)
+        self.clyde = enemy.Enemy(area.Area.areaB)
+        self.inky = enemy.Enemy(area.Area.areaC)
+        self.pinky = enemy.Enemy(area.Area.areaD)
         self.enemies = [self.blinky, self.clyde, self.inky, self.pinky]
         for unit in self.enemies:
             unit.create_unit()
-            unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.name))
+            unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.area))
             
     def handle_player_event(self):
         if self.player.event.type_event == player.PlayerEventType.FoodEvent:

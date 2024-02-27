@@ -2,7 +2,7 @@ import pygame
 from engine import sprites
 from engine import coords
 from engine.entity import direction
-from engine.entity import enemyname
+from engine.entity import area
 from random import choice
 #TODO: ограничить область передвижения
 
@@ -14,23 +14,23 @@ class Enemy:
     ticks_for_animation = 0
     delay_timer = 0
     
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, area):
+        self.area = area
     
     def set_spawn_coord(self, start_cell):
         self.rect.x, self.rect.y = self.coords.cells_to_pixels_xy(start_cell)
         
     def create_unit(self):
-        if self.name == enemyname.EnemyName.Blinky:
+        if self.area == area.Area.areaA:
             self.image = sprites.Sprites.blinky_right_1
             self.rect = self.image.get_rect()
-        if self.name == enemyname.EnemyName.Clyde:
+        if self.area == area.Area.areaB:
             self.image = sprites.Sprites.clyde_left_1
             self.rect = self.image.get_rect()
-        if self.name == enemyname.EnemyName.Inky:
+        if self.area == area.Area.areaC:
             self.image = sprites.Sprites.inky_right_1
             self.rect = self.image.get_rect()
-        if self.name == enemyname.EnemyName.Pinky:
+        if self.area == area.Area.areaD:
             self.image = sprites.Sprites.pinky_left_1
             self.rect = self.image.get_rect()
             
@@ -43,13 +43,13 @@ class Enemy:
     def draw(self, screen: pygame.surface.Surface):
         self.calculate_ticks_for_animation()
         pos = (self.rect.x, self.rect.y)
-        if self.name == enemyname.EnemyName.Blinky:
+        if self.area == area.Area.areaA:
             self.draw_blinky(screen, pos)
-        if self.name == enemyname.EnemyName.Clyde:
+        if self.area == area.Area.areaB:
             self.draw_clyde(screen, pos)
-        if self.name == enemyname.EnemyName.Inky:
+        if self.area == area.Area.areaC:
             self.draw_inky(screen, pos)
-        if self.name == enemyname.EnemyName.Pinky:
+        if self.area == area.Area.areaD:
             self.draw_pinky(screen, pos)
             
     def draw_blinky(self, screen: pygame.surface.Surface, pos):
@@ -135,7 +135,7 @@ class Enemy:
 
     def addit_conditions(self):
         coords = self.get_coord()
-        if self.name == enemyname.EnemyName.Blinky:
+        if self.area == area.Area.areaA:
             if self.enemy_direction == direction.Direction.right:
                 if coords[0] >= 7:
                     return True
@@ -143,7 +143,7 @@ class Enemy:
                 if coords[1] >= 7:
                     return True
         
-        if self.name == enemyname.EnemyName.Clyde:
+        if self.area == area.Area.areaB:
             if self.enemy_direction == direction.Direction.left:
                 if coords[0] <= 7:
                     return True
@@ -151,7 +151,7 @@ class Enemy:
                 if coords[1] >= 7:
                     return True
                 
-        if self.name == enemyname.EnemyName.Inky:
+        if self.area == area.Area.areaC:
             if self.enemy_direction == direction.Direction.right:
                 if coords[0] >= 7:
                     return True
@@ -159,7 +159,7 @@ class Enemy:
                 if coords[1] <= 7:
                     return True
                 
-        if self.name == enemyname.EnemyName.Pinky:
+        if self.area == area.Area.areaD:
             if self.enemy_direction == direction.Direction.left:
                 if coords[0] <= 7:
                     return True

@@ -2,14 +2,14 @@ import json
 from engine.board import cell
 from engine import coords
 from engine.entity import direction
-from engine.entity import enemyname
+from engine.entity import area
 
 class Board:
     game_map: list
     coords = coords.Coords()
     
-    def __init__(self, level_name):
-        file_path = str("././config/maps/"+level_name)
+    def __init__(self, level_area):
+        file_path = str("././config/maps/"+level_area)
         file_map = open(file_path, 'r')
         game_map_json = json.loads(file_map.read())
         file_map.close()
@@ -94,23 +94,23 @@ class Board:
 
         return lambda coords, curr_direction: check(coords, curr_direction)
     
-    def get_enemy_start_cell(self, name):
-        if name == enemyname.EnemyName.Blinky:
+    def get_enemy_start_cell(self, e_area):
+        if e_area == area.Area.areaA:
             for py in range(0, 8):
                 for px in range(0, 8):
                     if isinstance(self.game_map[py][px], cell.EnemyStartCell):
                         return ((px, py))
-        if name == enemyname.EnemyName.Clyde:
+        if e_area == area.Area.areaB:
             for py in range(0, 8):
                 for px in range(8, 15):
                     if isinstance(self.game_map[py][px], cell.EnemyStartCell):
                         return ((px, py))
-        if name == enemyname.EnemyName.Inky:
+        if e_area == area.Area.areaC:
             for py in range(7, 15):
                 for px in range(0, 8):
                     if isinstance(self.game_map[py][px], cell.EnemyStartCell):
                         return ((px, py))
-        if name == enemyname.EnemyName.Pinky:
+        if e_area == area.Area.areaD:
             for py in range(7, 15):
                 for px in range(7, 15):
                     if isinstance(self.game_map[py][px], cell.EnemyStartCell):
