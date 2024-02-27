@@ -115,3 +115,76 @@ class Board:
                 for px in range(7, 15):
                     if isinstance(self.game_map[py][px], cell.EnemyStartCell):
                         return ((px, py))
+                    
+    def is_block_ahead_enemy(self):
+        def check(coords, curr_direction):
+            x, y = coords[0], coords[1]
+            if curr_direction == direction.Direction.right:
+                return isinstance(self.game_map[y][x+1], cell.BlockCell)
+            elif curr_direction == direction.Direction.left:
+                return isinstance(self.game_map[y][x-1], cell.BlockCell)
+            elif curr_direction == direction.Direction.down:
+                return isinstance(self.game_map[y+1][x], cell.BlockCell)
+            elif curr_direction == direction.Direction.up:
+                return isinstance(self.game_map[y-1][x], cell.BlockCell)
+            else:
+                return False
+
+        return lambda coords, curr_direction: check(coords, curr_direction)
+    
+    def get_free_direction(self):
+        def check(coords, past_direction):
+            directions = []
+            x, y = coords[0], coords[1]
+            if past_direction == direction.Direction.no_direction:
+                if not isinstance(self.game_map[y][x+1], cell.BlockCell):
+                    directions.append(direction.Direction.right)
+                if not isinstance(self.game_map[y][x-1], cell.BlockCell):
+                    directions.append(direction.Direction.left) 
+                if not isinstance(self.game_map[y-1][x], cell.BlockCell):
+                    directions.append(direction.Direction.up)
+                if not isinstance(self.game_map[y+1][x], cell.BlockCell):
+                    directions.append(direction.Direction.down)
+                return directions
+                    
+            if past_direction == direction.Direction.right:
+                if not isinstance(self.game_map[y-1][x], cell.BlockCell):
+                    directions.append(direction.Direction.up)
+                if not isinstance(self.game_map[y+1][x], cell.BlockCell):
+                    directions.append(direction.Direction.down)
+                if len(directions) == 0:
+                    return ([direction.Direction.left])
+                else:
+                    return directions
+                 
+            elif past_direction == direction.Direction.left:
+                if not isinstance(self.game_map[y-1][x], cell.BlockCell):
+                    directions.append(direction.Direction.up)
+                if not isinstance(self.game_map[y+1][x], cell.BlockCell):
+                    directions.append(direction.Direction.down)
+                if len(directions) == 0:
+                    return ([direction.Direction.right])
+                else:
+                    return directions
+                 
+            elif past_direction == direction.Direction.down:
+                if not isinstance(self.game_map[y][x+1], cell.BlockCell):
+                    directions.append(direction.Direction.right)
+                if not isinstance(self.game_map[y][x-1], cell.BlockCell):
+                    directions.append(direction.Direction.left)
+                if len(directions) == 0:
+                    return ([direction.Direction.up])
+                else:
+                    return directions
+                 
+            elif past_direction == direction.Direction.up:
+                if not isinstance(self.game_map[y][x+1], cell.BlockCell):
+                    directions.append(direction.Direction.right)
+                if not isinstance(self.game_map[y][x-1], cell.BlockCell):
+                    directions.append(direction.Direction.left)
+                if len(directions) == 0:
+                    return ([direction.Direction.down])
+                else:
+                    return directions
+
+        return lambda coords, past_direction: check(coords, past_direction)

@@ -17,7 +17,11 @@ class PlayerEvent:
     def __init__(self, type_event, context = None):
         self.type_event = type_event
         self.context = context
-        
+
+class PlayerState(Enum):
+    vulnerable = auto()
+    invulnerable = auto()
+    
 class Player:
     
     speed = 2
