@@ -40,46 +40,55 @@ class Enemy:
     
     def draw(self, screen: pygame.surface.Surface):
         self.calculate_ticks_for_animation()
-        
+        pos = (self.rect.x, self.rect.y)
         if self.name == enemyname.EnemyName.Blinky:
-            if self.enemy_direction == direction.Direction.no_direction or self.enemy_direction == direction.Direction.right:
-                screen.blit(sprites.Sprites.blinky_move_right[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))
-            if self.enemy_direction == direction.Direction.left:
-                screen.blit(sprites.Sprites.blinky_move_left[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))        
-            if self.enemy_direction == direction.Direction.down:        
-                screen.blit(sprites.Sprites.blinky_move_down[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))    
-            if self.enemy_direction == direction.Direction.up:
-                screen.blit(sprites.Sprites.blinky_move_up[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))
-        
+            self.draw_blinky(screen, pos)
         if self.name == enemyname.EnemyName.Clyde:
-            if self.enemy_direction == direction.Direction.no_direction or self.enemy_direction == direction.Direction.left:
-                screen.blit(sprites.Sprites.clyde_move_left[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))
-            if self.enemy_direction == direction.Direction.right:
-                screen.blit(sprites.Sprites.clyde_move_right[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))      
-            if self.enemy_direction == direction.Direction.down:        
-                screen.blit(sprites.Sprites.clyde_move_down[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))    
-            if self.enemy_direction == direction.Direction.up:
-                screen.blit(sprites.Sprites.clyde_move_up[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))
-        
+            self.draw_clyde(screen, pos)
         if self.name == enemyname.EnemyName.Inky:
-            if self.enemy_direction == direction.Direction.no_direction or self.enemy_direction == direction.Direction.right:
-                screen.blit(sprites.Sprites.inky_move_right[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))
-            if self.enemy_direction == direction.Direction.left:
-                screen.blit(sprites.Sprites.inky_move_left[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))        
-            if self.enemy_direction == direction.Direction.down:        
-                screen.blit(sprites.Sprites.inky_move_down[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))    
-            if self.enemy_direction == direction.Direction.up:
-                screen.blit(sprites.Sprites.inky_move_up[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))
-        
+            self.draw_inky(screen, pos)
         if self.name == enemyname.EnemyName.Pinky:
-            if self.enemy_direction == direction.Direction.no_direction or self.enemy_direction == direction.Direction.left:
-                screen.blit(sprites.Sprites.pinky_move_left[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))
-            if self.enemy_direction == direction.Direction.right:
-                screen.blit(sprites.Sprites.pinky_move_right[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))      
-            if self.enemy_direction == direction.Direction.down:        
-                screen.blit(sprites.Sprites.pinky_move_down[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))    
-            if self.enemy_direction == direction.Direction.up:
-                screen.blit(sprites.Sprites.pinky_move_up[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))
+            self.draw_pinky(screen, pos)
+            
+    def draw_blinky(self, screen: pygame.surface.Surface, pos):
+        if self.enemy_direction == direction.Direction.no_direction or self.enemy_direction == direction.Direction.right:
+            screen.blit(sprites.Sprites.blinky_move_right[self.ticks_for_animation // 6], pos)
+        if self.enemy_direction == direction.Direction.left:
+            screen.blit(sprites.Sprites.blinky_move_left[self.ticks_for_animation // 6], pos)        
+        if self.enemy_direction == direction.Direction.down:        
+            screen.blit(sprites.Sprites.blinky_move_down[self.ticks_for_animation // 6], pos)    
+        if self.enemy_direction == direction.Direction.up:
+            screen.blit(sprites.Sprites.blinky_move_up[self.ticks_for_animation // 6], pos)
+    
+    def draw_clyde(self, screen: pygame.surface.Surface, pos):
+        if self.enemy_direction == direction.Direction.no_direction or self.enemy_direction == direction.Direction.left:
+            screen.blit(sprites.Sprites.clyde_move_left[self.ticks_for_animation // 6], pos)
+        if self.enemy_direction == direction.Direction.right:
+            screen.blit(sprites.Sprites.clyde_move_right[self.ticks_for_animation // 6], pos)      
+        if self.enemy_direction == direction.Direction.down:        
+            screen.blit(sprites.Sprites.clyde_move_down[self.ticks_for_animation // 6], pos)    
+        if self.enemy_direction == direction.Direction.up:
+            screen.blit(sprites.Sprites.clyde_move_up[self.ticks_for_animation // 6], pos)
+    
+    def draw_inky(self, screen: pygame.surface.Surface, pos):
+        if self.enemy_direction == direction.Direction.no_direction or self.enemy_direction == direction.Direction.right:
+            screen.blit(sprites.Sprites.inky_move_right[self.ticks_for_animation // 6], pos)
+        if self.enemy_direction == direction.Direction.left:
+            screen.blit(sprites.Sprites.inky_move_left[self.ticks_for_animation // 6], pos)        
+        if self.enemy_direction == direction.Direction.down:        
+            screen.blit(sprites.Sprites.inky_move_down[self.ticks_for_animation // 6], pos)    
+        if self.enemy_direction == direction.Direction.up:
+            screen.blit(sprites.Sprites.inky_move_up[self.ticks_for_animation // 6], pos)
+        
+    def draw_pinky(self, screen: pygame.surface.Surface, pos):
+        if self.enemy_direction == direction.Direction.no_direction or self.enemy_direction == direction.Direction.left:
+            screen.blit(sprites.Sprites.pinky_move_left[self.ticks_for_animation // 6], pos)
+        if self.enemy_direction == direction.Direction.right:
+            screen.blit(sprites.Sprites.pinky_move_right[self.ticks_for_animation // 6], pos)      
+        if self.enemy_direction == direction.Direction.down:        
+            screen.blit(sprites.Sprites.pinky_move_down[self.ticks_for_animation // 6], pos)    
+        if self.enemy_direction == direction.Direction.up:
+            screen.blit(sprites.Sprites.pinky_move_up[self.ticks_for_animation // 6], pos)
             
     def get_coord(self):
         return ((self.coords.pixels_to_cells_xy(self.rect.x, self.rect.y)))
