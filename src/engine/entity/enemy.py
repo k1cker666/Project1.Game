@@ -11,6 +11,7 @@ class Enemy:
     enemy_direction = direction.Direction.no_direction
     enemy_past_direction = direction.Direction.no_direction
     ticks_for_animation = 0
+    delay_timer = 0
     
     def __init__(self, name):
         self.name = name
@@ -94,27 +95,32 @@ class Enemy:
         return ((self.coords.pixels_to_cells_xy(self.rect.x, self.rect.y)))
     
     def move(self, is_block, free_diretnion):
-        coords = self.get_coord()
-        
-        x_start_cell = self.coords.get_x_in_cell(coords, self.rect.x)
-        y_start_cell = self.coords.get_y_in_cell(coords, self.rect.y)
-        
-        if self.enemy_direction == direction.Direction.no_direction:
-            self.enemy_direction = choice(free_diretnion(coords, self.enemy_past_direction))
-                
-        if is_block(coords, self.enemy_direction) and x_start_cell == 0 and y_start_cell == 0:
-            self.enemy_past_direction = self.enemy_direction
-            self.enemy_direction = choice(free_diretnion(coords, self.enemy_past_direction))
-            
-        if self.enemy_direction == direction.Direction.right:
-            self.rect.x += self.speed
+        if self.delay_timer != 60:
+            self.delay_timer += 1
+        else:
+            coords = self.get_coord()
 
-        if self.enemy_direction == direction.Direction.left:
-            self.rect.x -= self.speed
+            x_start_cell = self.coords.get_x_in_cell(coords, self.rect.x)
+            y_start_cell = self.coords.get_y_in_cell(coords, self.rect.y)
 
-        if self.enemy_direction == direction.Direction.down:
-            self.rect.y += self.speed
+            if self.enemy_direction == direction.Direction.no_direction:
+                self.enemy_direction = choice(free_diretnion(coords, self.enemy_past_direction))
 
-        if self.enemy_direction == direction.Direction.up:
-            self.rect.y -= self.speed
-            
+            if is_block(coords, self.enemy_direction) and x_start_cell == 0 and y_start_cell == 0:
+                self.enemy_past_direction = self.enemy_direction
+                self.enemy_direction = choice(free_diretnion(coords, self.enemy_past_direction))
+
+            if self.enemy_direction == direction.Direction.right:
+                self.rect.x += self.speed
+
+            if self.enemy_direction == direction.Direction.left:
+                self.rect.x -= self.speed
+
+            if self.enemy_direction == direction.Direction.down:
+                self.rect.y += self.speed
+
+            if self.enemy_direction == direction.Direction.up:
+                self.rect.y -= self.speed
+    
+    def clear_delay_timer(self):
+        self.delay_timer = 0

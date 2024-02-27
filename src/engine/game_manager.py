@@ -29,15 +29,8 @@ class GameManager:
         self.board = board.Board(level_name)
         self.player = player.Player()
         self.player.set_spawn_coord(self.board.get_player_start_cell())
-        self.blinky = enemy.Enemy(enemyname.EnemyName.Blinky)
-        self.clyde = enemy.Enemy(enemyname.EnemyName.Clyde)
-        self.inky = enemy.Enemy(enemyname.EnemyName.Inky)
-        self.pinky = enemy.Enemy(enemyname.EnemyName.Pinky)
-        self.enemies = [self.blinky, self.clyde, self.inky, self.pinky]
-        for unit in self.enemies:
-            unit.create_unit()
-            unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.name))
-
+        self.enemy_innit()
+    
     def run(self, screen: pygame.surface.Surface):
         while True:
             if self.game_state == StateManager.in_menu:
@@ -55,6 +48,16 @@ class GameManager:
             pygame.display.flip()
             self.clock.tick(self.FPS)
                     
+    def enemy_innit(self):
+        self.blinky = enemy.Enemy(enemyname.EnemyName.Blinky)
+        self.clyde = enemy.Enemy(enemyname.EnemyName.Clyde)
+        self.inky = enemy.Enemy(enemyname.EnemyName.Inky)
+        self.pinky = enemy.Enemy(enemyname.EnemyName.Pinky)
+        self.enemies = [self.blinky, self.clyde, self.inky, self.pinky]
+        for unit in self.enemies:
+            unit.create_unit()
+            unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.name))
+            
     def handle_player_event(self):
         if self.player.event.type_event == player.PlayerEventType.FoodEvent:
             self.board.set_empty_cell(self.player.event.context['coords'])
@@ -141,9 +144,6 @@ class GameManager:
                 if event.key == pygame.K_1:
                     self.game_state = StateManager.in_menu
         
-    # три реализации: init_level(вызываем в конструкторе), restart_level и turn_next_level
-    # change_level -> get_level
-    # Рома: не понял что должна делать функция init_level
     def get_level(self, level_num):
         level_list = config.get_value('levels')
         level_name = level_list[level_num]['map_file']
@@ -155,11 +155,17 @@ class GameManager:
         self.board = board.Board(level_name)
         self.player.set_spawn_coord(self.board.get_player_start_cell())
         self.player.clear_curr_level_score()
+        for unit in self.enemies:
+            unit.clear_delay_timer()
+            unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.name))
         self.game_state = StateManager.game_process
         
     def restart_level(self):
         self.player.total_score -= self.player.curr_level_score
         self.player.clear_curr_level_score()
+        for unit in self.enemies:
+            unit.clear_delay_timer()
+            unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.name))
         level_name = self.get_level(self.level_num)
         self.board = board.Board(level_name)
         self.player.set_spawn_coord(self.board.get_player_start_cell())
