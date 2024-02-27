@@ -42,12 +42,14 @@ class Player:
     coords = coords.Coords()
 
     ticks_for_animation = 0
+    
+    player_anim = sprites.Sprites.player_animation
 
     def __init__(self):
         self.screen_width = config.get_value('screen_width')
         self.screen_height = config.get_value('screen_height')
         self.cell_width = self.cell_height = self.screen_height/20
-        self.rect = sprites.Sprites.player_stay.get_rect()
+        self.rect = self.player_anim['stay'].get_rect()
     
     def set_spawn_coord(self, start_cell):
         self.rect.x, self.rect.y = self.coords.cells_to_pixels_xy(start_cell)
@@ -57,15 +59,15 @@ class Player:
     
     def draw(self, screen: pygame.surface.Surface):
         if self.player_direction == direction.Direction.stay:
-            screen.blit(sprites.Sprites.player_stay, (self.rect.x, self.rect.y))
+            screen.blit(self.player_anim['stay'], (self.rect.x, self.rect.y))
         if self.player_direction == direction.Direction.right:
-            screen.blit(sprites.Sprites.move_right[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))
+            screen.blit(self.player_anim['right'][self.ticks_for_animation // 6], (self.rect.x, self.rect.y))
         if self.player_direction == direction.Direction.left:
-            screen.blit(sprites.Sprites.move_left[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))        
+            screen.blit(self.player_anim['left'][self.ticks_for_animation // 6], (self.rect.x, self.rect.y))        
         if self.player_direction == direction.Direction.down:        
-            screen.blit(sprites.Sprites.move_down[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))    
+            screen.blit(self.player_anim['down'][self.ticks_for_animation // 6], (self.rect.x, self.rect.y))    
         if self.player_direction == direction.Direction.up:
-            screen.blit(sprites.Sprites.move_up[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))
+            screen.blit(self.player_anim['up'][self.ticks_for_animation // 6], (self.rect.x, self.rect.y))
 
     def calculate_ticks_for_animation(self):
         if self.ticks_for_animation >= 20:
