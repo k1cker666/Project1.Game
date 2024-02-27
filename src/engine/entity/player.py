@@ -67,7 +67,6 @@ class Player:
     def calculate_ticks_for_animation(self):
         if self.ticks_for_animation >= 20:
             self.ticks_for_animation = 0
-            self.player_want_direction = direction.Direction.no_direction
         else:    
             self.ticks_for_animation += 1
 
@@ -111,8 +110,7 @@ class Player:
                 self.player_direction = self.player_want_direction
                 self.player_want_direction = direction.Direction.no_direction
             
-            if is_block:
-                self.rect.x = self.coords.cells_to_pixels_x(x_cell)
+            if is_block and self.coords.get_x_in_cell(coord, self.rect.x) == 0:
                 self.player_direction = direction.Direction.stay
 
         if self.player_direction == direction.Direction.down:
@@ -134,8 +132,7 @@ class Player:
                 self.player_direction = self.player_want_direction
                 self.player_want_direction = direction.Direction.no_direction
             
-            if  is_block:
-                self.rect.y = self.coords.cells_to_pixels_y(y_cell)
+            if  is_block and self.coords.get_y_in_cell(coord, self.rect.y) == 0:
                 self.player_direction = direction.Direction.stay
 
     def interact(self, current_cell):

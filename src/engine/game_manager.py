@@ -80,7 +80,7 @@ class GameManager:
         self.player.draw(screen)
         for unit in self.enemies:
             unit.draw(screen)
-            unit.move(self.board.is_block_ahead_enemy(), self.board.get_free_direction())
+            unit.move(self.board.is_block_ahead(), self.board.get_free_direction())
         self.player.move(self.board.is_block_ahead())
         self.player.interact(self.board.get_cell(self.player.get_coord()))
         self.handle_player_event()

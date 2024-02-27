@@ -84,11 +84,11 @@ class Board:
             if curr_direction == direction.Direction.right:
                 return isinstance(self.game_map[y][x+1], cell.BlockCell)
             elif curr_direction == direction.Direction.left:
-                return isinstance(self.game_map[y][x], cell.BlockCell)
+                return isinstance(self.game_map[y][x-1], cell.BlockCell)
             elif curr_direction == direction.Direction.down:
                 return isinstance(self.game_map[y+1][x], cell.BlockCell)
             elif curr_direction == direction.Direction.up:
-                return isinstance(self.game_map[y][x], cell.BlockCell)
+                return isinstance(self.game_map[y-1][x], cell.BlockCell)
             else:
                 return False
 
@@ -116,22 +116,6 @@ class Board:
                     if isinstance(self.game_map[py][px], cell.EnemyStartCell):
                         return ((px, py))
                     
-    def is_block_ahead_enemy(self):
-        def check(coords, curr_direction):
-            x, y = coords[0], coords[1]
-            if curr_direction == direction.Direction.right:
-                return isinstance(self.game_map[y][x+1], cell.BlockCell)
-            elif curr_direction == direction.Direction.left:
-                return isinstance(self.game_map[y][x-1], cell.BlockCell)
-            elif curr_direction == direction.Direction.down:
-                return isinstance(self.game_map[y+1][x], cell.BlockCell)
-            elif curr_direction == direction.Direction.up:
-                return isinstance(self.game_map[y-1][x], cell.BlockCell)
-            else:
-                return False
-
-        return lambda coords, curr_direction: check(coords, curr_direction)
-    
     def get_free_direction(self):
         def check(coords, past_direction):
             directions = []
