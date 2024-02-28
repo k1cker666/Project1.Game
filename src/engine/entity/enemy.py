@@ -4,7 +4,6 @@ from engine import coords
 from engine.entity import direction
 from engine.entity import area
 from random import choice
-#TODO: ограничить область передвижения
 
 class Enemy:
     coords = coords.Coords()
@@ -99,7 +98,7 @@ class Enemy:
     def get_coord(self):
         return ((self.coords.pixels_to_cells_xy(self.rect.x, self.rect.y)))
     
-    def move(self, is_block, free_diretnion):
+    def move(self, is_block, free_diretnion, is_own_area):
         if self.delay_timer != 60:
             self.delay_timer += 1
         else:
@@ -108,19 +107,19 @@ class Enemy:
             x_start_cell = self.coords.get_x_in_cell(coords, self.rect.x)
             y_start_cell = self.coords.get_y_in_cell(coords, self.rect.y)
             
-            main_condirion = is_block(coords, self.enemy_direction) and x_start_cell == 0 and y_start_cell == 0
+            main_condition = is_block(coords, self.enemy_direction) and x_start_cell == 0 and y_start_cell == 0
+            addit_condition = is_own_area(coords, self.enemy_direction, self.area) and x_start_cell == 0 and y_start_cell == 0
 
             if self.enemy_direction == direction.Direction.no_direction:
                 self.enemy_direction = choice(free_diretnion(coords, self.enemy_past_direction))
-
-            if self.addit_conditions() and x_start_cell == 0 and y_start_cell == 0:
+            
+            if addit_condition:
+                self.hard_reverse_direction(self.enemy_direction)
+                
+            if main_condition:
                 self.enemy_past_direction = self.enemy_direction
                 self.enemy_direction = choice(free_diretnion(coords, self.enemy_past_direction))
             
-            if main_condirion:
-                self.enemy_past_direction = self.enemy_direction
-                self.enemy_direction = choice(free_diretnion(coords, self.enemy_past_direction))
-
             if self.enemy_direction == direction.Direction.right:
                 self.rect.x += self.speed
 
@@ -132,41 +131,15 @@ class Enemy:
 
             if self.enemy_direction == direction.Direction.up:
                 self.rect.y -= self.speed
-
-    def addit_conditions(self):
-        coords = self.get_coord()
-        if self.area == area.Area.areaA:
-            if self.enemy_direction == direction.Direction.right:
-                if coords[0] >= 7:
-                    return True
-            if self.enemy_direction == direction.Direction.down:
-                if coords[1] >= 7:
-                    return True
-        
-        if self.area == area.Area.areaB:
-            if self.enemy_direction == direction.Direction.left:
-                if coords[0] <= 7:
-                    return True
-            if self.enemy_direction == direction.Direction.down:
-                if coords[1] >= 7:
-                    return True
-                
-        if self.area == area.Area.areaC:
-            if self.enemy_direction == direction.Direction.right:
-                if coords[0] >= 7:
-                    return True
-            if self.enemy_direction == direction.Direction.up:
-                if coords[1] <= 7:
-                    return True
-                
-        if self.area == area.Area.areaD:
-            if self.enemy_direction == direction.Direction.left:
-                if coords[0] <= 7:
-                    return True
-            if self.enemy_direction == direction.Direction.up:
-                if coords[1] <= 7:
-                    return True
-        return False
+    
+    def hard_reverse_direction(self, curr_direction):
+        reversed_directions = {
+            direction.Direction.right: direction.Direction.left,
+            direction.Direction.left: direction.Direction.right,
+            direction.Direction.down: direction.Direction.up,
+            direction.Direction.up: direction.Direction.down
+        }
+        self.enemy_direction = reversed_directions[curr_direction]
     
     def get_rect_xy(self):
         return self.rect.x, self.rect.y

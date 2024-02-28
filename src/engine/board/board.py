@@ -164,3 +164,52 @@ class Board:
             return directions
 
         return lambda coords, past_direction: check(coords, past_direction)
+    
+    def is_own_areav2(self):
+        def check(coords, curr_direction, e_area):
+            x, y = coords[0], coords[1]
+            
+            if e_area == area.Area.areaA:
+                if curr_direction == direction.Direction.right:
+                    return (x+1 >= 7)
+                elif curr_direction == direction.Direction.down:
+                    return (y+1 >= 7)
+            
+            elif e_area == area.Area.areaB:
+                if curr_direction == direction.Direction.left:
+                    return (x-1 <= 7)
+                elif curr_direction == direction.Direction.down:
+                    return (y+1 >= 7)
+           
+            elif e_area == area.Area.areaC:
+                if curr_direction == direction.Direction.right:
+                    return (x+1 >= 7)
+                elif curr_direction == direction.Direction.up:
+                    return (y-1 <= 7)
+            
+            elif e_area == area.Area.areaD:
+                if curr_direction == direction.Direction.left:
+                    return (x-1 == 7)
+                elif curr_direction == direction.Direction.up:
+                    return (y-1 == 7)
+
+        return lambda coords, curr_direction, e_area: check(coords, curr_direction, e_area)
+    
+    def is_own_area(self):
+        def check(coords, curr_direction, e_area):
+            x = coords[0]
+            y = coords[1]
+        
+            if curr_direction == direction.Direction.right:
+                return not self.coords.get_area_from_coords(x+1, y) == e_area
+        
+            elif curr_direction == direction.Direction.left:
+                return not self.coords.get_area_from_coords(x-1, y) == e_area
+        
+            elif curr_direction == direction.Direction.down:
+                return not self.coords.get_area_from_coords(x, y+1) == e_area
+            
+            elif curr_direction == direction.Direction.up:
+                return not self.coords.get_area_from_coords(x, y-1) == e_area
+
+        return lambda coords, curr_direction, e_area: check(coords, curr_direction, e_area)

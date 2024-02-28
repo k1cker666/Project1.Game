@@ -132,3 +132,28 @@ class Interface:
         screen.blit(game_complete_window, game_complete_window_pos)
         pygame.draw.rect(screen, (255, 255, 0),
                          (game_complete_window_pos.x, game_complete_window_pos.y, window_width, window_height), 3)
+        
+    def call_game_over_window(self, screen: pygame.surface.Surface, score):
+        window_width = 300
+        window_height = 150
+        game_over_window = pygame.Surface((window_width, window_height))
+        game_over_window.fill((0, 0, 0))
+        game_over_window_pos = game_over_window.get_rect(center=(config.get_value('screen_width')//2, config.get_value('screen_height')//2))
+        
+        font = pygame.font.Font('./fonts/BetterVCR.ttf',  int(window_height/7))
+        game_over_text = font.render('Game over!', 1, (255, 255, 0))
+        game_over_text_pos = game_over_text.get_rect(center=(window_width//2, window_height/5))
+        game_over_window.blit(game_over_text, game_over_text_pos)
+
+        game_over_score = font.render(f'Total score: {score}', 1, (255, 255, 0))
+        game_over_score_pos = game_over_score.get_rect(center=(window_width//2, window_height*2/5))
+        game_over_window.blit(game_over_score, game_over_score_pos)
+
+        font_button = pygame.font.Font('./fonts/BetterVCR.ttf',  int(window_height/10))
+        restart_game = font_button.render('1. Restart game', 1, (255, 255, 0))
+        restart_game_pos = restart_game.get_rect(center=(window_width//2, window_height*5/6))
+        game_over_window.blit(restart_game, restart_game_pos)
+        
+        screen.blit(game_over_window, game_over_window_pos)
+        pygame.draw.rect(screen, (255, 255, 0),
+                        (game_over_window_pos.x, game_over_window_pos.y, window_width, window_height), 3)

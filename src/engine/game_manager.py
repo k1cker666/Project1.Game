@@ -15,6 +15,7 @@ class StateManager(Enum):
     level_complete_window = auto()
     pause = auto()
     game_comlete = auto()
+    game_over = auto()
     game_quit = auto()
     
 class GameManager:
@@ -43,6 +44,8 @@ class GameManager:
                 self.call_pause_game_window(screen)
             if self.game_state == StateManager.game_comlete:
                 self.call_complete_game_window(screen)
+            if self.game_state == StateManager.game_over:
+                self.call_game_over_window(screen)
             if self.game_state == StateManager.game_quit:
                 return
             pygame.display.flip()
@@ -59,7 +62,9 @@ class GameManager:
             unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.area))
             
     def handle_player_event(self):
-        if self.player.event.type_event == player.PlayerEventType.FoodEvent:
+        if self.player.event.type_event == player.PlayerEventType.NoEvent:
+            return
+        elif self.player.event.type_event == player.PlayerEventType.FoodEvent:
             self.board.set_empty_cell(self.player.event.context['coords'])
             self.player.clear_event()
 
@@ -80,7 +85,7 @@ class GameManager:
         
         for unit in self.enemies:
             unit.draw(screen)
-            unit.move(self.board.is_block_ahead(), self.board.get_free_direction())
+            unit.move(self.board.is_block_ahead(), self.board.get_free_direction(), self.board.is_own_area())
             self.player.interact_enemy(unit.get_rect_xy())
         self.player.draw(screen)
         self.player.move(self.board.is_block_ahead())
@@ -110,6 +115,9 @@ class GameManager:
                 self.game_state = StateManager.game_comlete
             else:
                 self.game_state = StateManager.level_complete_window
+        if self.player.helthpoints == 0:
+            self.interface.set_alpha_background(screen)
+            self.game_state = StateManager.game_over
             
     def call_level_complite_window(self, screen: pygame.surface.Surface):
         self.player.change_direction(direction.Direction.stay)
@@ -146,6 +154,16 @@ class GameManager:
                 if event.key == pygame.K_1:
                     self.game_state = StateManager.in_menu
         
+    def call_game_over_window(self, screen: pygame.surface.Surface):
+        self.interface.call_game_over_window(screen, self.player.total_score)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.game_state = StateManager.game_quit
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_1:
+                    self.restart_game()
+                    self.game_state = StateManager.in_menu
+    
     def get_level(self, level_num):
         level_list = config.get_value('levels')
         level_name = level_list[level_num]['map_file']
@@ -173,7 +191,17 @@ class GameManager:
         self.player.set_spawn_coord(self.board.get_player_start_cell())
         self.game_state = StateManager.game_process
         
+    def restart_game(self):
+        self.level_num = 0
+        self.player.clear_start_stats()
+        for unit in self.enemies:
+            unit.clear_delay_timer()
+            unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.area))
+        level_name = self.get_level(self.level_num)
+        self.board = board.Board(level_name)
+        self.player.set_spawn_coord(self.board.get_player_start_cell())
+        self.player.player_direction = direction.Direction.stay
+    
     def check_levels(self):
         count_of_levels = len(config.get_value('levels'))
-        if count_of_levels == (self.level_num+1):
-            return True
+        return (count_of_levels == (self.level_num+1))

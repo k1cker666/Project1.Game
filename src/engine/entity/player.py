@@ -5,8 +5,6 @@ from enum import Enum, auto
 from engine import sprites
 from engine import coords
 from engine.entity import direction
-
-#TODO: сделать ивент столкновения
     
 class PlayerEventType(Enum):
     NoEvent = auto()
@@ -143,40 +141,47 @@ class Player:
         if isinstance(current_cell, cell.FoodCell):
             if self.player_direction == direction.Direction.right or self.player_direction == direction.Direction.left:
                 if x_in_cell in range(0, 3):
-                    self.event = self.get_player_event(1)
+                    self.event = self.get_player_event(2)
                     self.total_score += 50
                     self.curr_level_score += 50
             if self.player_direction == direction.Direction.up or self.player_direction == direction.Direction.down:
                 if y_in_cell in range(0, 3):
-                    self.event = self.get_player_event(1)
+                    self.event = self.get_player_event(2)
                     self.total_score += 50
                     self.curr_level_score += 50
 
     def interact_enemy(self, enemy_coords):
         enemy_x, enemy_y = enemy_coords
-        if self.player_state == PlayerState.vulnerable and self.rect.x - enemy_x == 0 and self.rect.y - enemy_y == 0:
-                print('attack!')
+        if self.player_state == PlayerState.vulnerable:
+            if enemy_x >= self.rect.x and enemy_x <= self.rect.x+40 and enemy_y >= self.rect.y and enemy_y <= self.rect.y+40:
+                self.event = self.get_player_event(3)
                 self.helthpoints -= 1
                 self.player_state = PlayerState.invulnerable
+            if self.rect.x >= enemy_x and self.rect.x <= enemy_x+40 and self.rect.y >= enemy_y and self.rect.y <= enemy_y+40:
+                self.event = self.get_player_event(3)
+                self.helthpoints -= 1
+                self.player_state = PlayerState.invulnerable
+        self.invulnerable_counter()
+        self.destraction_helthpoint_animation()
+           
+    def invulnerable_counter(self):
         if self.player_state == PlayerState.invulnerable:
-            if self.invulnerable_timer == 160:
+            if self.invulnerable_timer == 200:
                 self.invulnerable_timer = 0
                 self.player_state = PlayerState.vulnerable
-                print('one more time')
             else:
                 self.invulnerable_timer += 1
-            
         
     def get_player_event(self, event):
         events = {
-            0: PlayerEventType.NoEvent,
-            1: PlayerEventType.FoodEvent,
-            2: PlayerEventType.EnemyAttack
+            1: PlayerEventType.NoEvent,
+            2: PlayerEventType.FoodEvent,
+            3: PlayerEventType.EnemyAttack
         }
         return PlayerEvent(type_event=events[event], context={'coords': self.get_coord()})
     
     def clear_event(self):
-        self.event = self.get_player_event(0)
+        self.event = self.get_player_event(1)
         
     def change_direction(self, direction):
         self.player_want_direction = direction
@@ -186,3 +191,16 @@ class Player:
         
     def clear_curr_level_score(self):
         self.curr_level_score = 0
+        
+    def clear_start_stats(self):
+        self.helthpoints = 4
+        self.total_score = 0
+        self.curr_level_score = 0
+    
+    def destraction_helthpoint_animation(self):
+        appear_nums = [50, 150]
+        disappear_nums = [100, 200]
+        if self.invulnerable_timer in appear_nums:
+            self.helthpoints += 1
+        if self.invulnerable_timer in disappear_nums:
+            self.helthpoints -= 1
