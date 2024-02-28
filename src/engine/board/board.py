@@ -165,36 +165,6 @@ class Board:
 
         return lambda coords, past_direction: check(coords, past_direction)
     
-    def is_own_areav2(self):
-        def check(coords, curr_direction, e_area):
-            x, y = coords[0], coords[1]
-            
-            if e_area == area.Area.areaA:
-                if curr_direction == direction.Direction.right:
-                    return (x+1 >= 7)
-                elif curr_direction == direction.Direction.down:
-                    return (y+1 >= 7)
-            
-            elif e_area == area.Area.areaB:
-                if curr_direction == direction.Direction.left:
-                    return (x-1 <= 7)
-                elif curr_direction == direction.Direction.down:
-                    return (y+1 >= 7)
-           
-            elif e_area == area.Area.areaC:
-                if curr_direction == direction.Direction.right:
-                    return (x+1 >= 7)
-                elif curr_direction == direction.Direction.up:
-                    return (y-1 <= 7)
-            
-            elif e_area == area.Area.areaD:
-                if curr_direction == direction.Direction.left:
-                    return (x-1 == 7)
-                elif curr_direction == direction.Direction.up:
-                    return (y-1 == 7)
-
-        return lambda coords, curr_direction, e_area: check(coords, curr_direction, e_area)
-    
     def is_own_area(self):
         def check(coords, curr_direction, e_area):
             x = coords[0]

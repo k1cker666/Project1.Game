@@ -154,11 +154,9 @@ class Player:
         enemy_x, enemy_y = enemy_coords
         if self.player_state == PlayerState.vulnerable:
             if enemy_x >= self.rect.x and enemy_x <= self.rect.x+40 and enemy_y >= self.rect.y and enemy_y <= self.rect.y+40:
-                self.event = self.get_player_event(3)
                 self.helthpoints -= 1
                 self.player_state = PlayerState.invulnerable
             if self.rect.x >= enemy_x and self.rect.x <= enemy_x+40 and self.rect.y >= enemy_y and self.rect.y <= enemy_y+40:
-                self.event = self.get_player_event(3)
                 self.helthpoints -= 1
                 self.player_state = PlayerState.invulnerable
         self.invulnerable_counter()
@@ -176,7 +174,6 @@ class Player:
         events = {
             1: PlayerEventType.NoEvent,
             2: PlayerEventType.FoodEvent,
-            3: PlayerEventType.EnemyAttack
         }
         return PlayerEvent(type_event=events[event], context={'coords': self.get_coord()})
     
