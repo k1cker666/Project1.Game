@@ -178,6 +178,7 @@ class GameManager:
         for unit in self.enemies:
             unit.clear_delay_timer()
             unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.area))
+            unit.enemy_direction = direction.Direction.no_direction
         self.game_state = StateManager.game_process
         
     def restart_level(self):

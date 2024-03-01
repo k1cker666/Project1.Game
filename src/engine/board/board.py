@@ -8,8 +8,8 @@ class Board:
     game_map: list
     coords = coords.Coords()
     
-    def __init__(self, level_area):
-        file_path = str("././config/maps/"+level_area)
+    def __init__(self, level_name):
+        file_path = str("././config/maps/"+level_name)
         file_map = open(file_path, 'r')
         game_map_json = json.loads(file_map.read())
         file_map.close()
@@ -120,47 +120,29 @@ class Board:
         def check(coords, past_direction):
             directions = []
             x, y = coords[0], coords[1]
-            if past_direction == direction.Direction.no_direction:
-                if not isinstance(self.game_map[y][x+1], cell.BlockCell):
-                    directions.append(direction.Direction.right)
-                if not isinstance(self.game_map[y][x-1], cell.BlockCell):
-                    directions.append(direction.Direction.left) 
-                if not isinstance(self.game_map[y-1][x], cell.BlockCell):
-                    directions.append(direction.Direction.up)
-                if not isinstance(self.game_map[y+1][x], cell.BlockCell):
-                    directions.append(direction.Direction.down)
                 
-            if past_direction == direction.Direction.right:
+            if past_direction == direction.Direction.right or past_direction == direction.Direction.left or past_direction == direction.Direction.no_direction:
                 if not isinstance(self.game_map[y-1][x], cell.BlockCell):
                     directions.append(direction.Direction.up)
                 if not isinstance(self.game_map[y+1][x], cell.BlockCell):
                     directions.append(direction.Direction.down)
                 if len(directions) == 0:
-                    return ([direction.Direction.left])
+                    if past_direction == direction.Direction.right:
+                        return ([direction.Direction.left])
+                    else:
+                        return ([direction.Direction.right])
                  
-            elif past_direction == direction.Direction.left:
-                if not isinstance(self.game_map[y-1][x], cell.BlockCell):
-                    directions.append(direction.Direction.up)
-                if not isinstance(self.game_map[y+1][x], cell.BlockCell):
-                    directions.append(direction.Direction.down)
-                if len(directions) == 0:
-                    return ([direction.Direction.right])
-                 
-            elif past_direction == direction.Direction.down:
+            if past_direction == direction.Direction.down or past_direction == direction.Direction.up or past_direction == direction.Direction.no_direction:
                 if not isinstance(self.game_map[y][x+1], cell.BlockCell):
                     directions.append(direction.Direction.right)
                 if not isinstance(self.game_map[y][x-1], cell.BlockCell):
                     directions.append(direction.Direction.left)
                 if len(directions) == 0:
-                    return ([direction.Direction.up])
-                 
-            elif past_direction == direction.Direction.up:
-                if not isinstance(self.game_map[y][x+1], cell.BlockCell):
-                    directions.append(direction.Direction.right)
-                if not isinstance(self.game_map[y][x-1], cell.BlockCell):
-                    directions.append(direction.Direction.left)
-                if len(directions) == 0:
-                    return ([direction.Direction.down])
+                    if past_direction == direction.Direction.down:
+                        return ([direction.Direction.up])
+                    else:
+                        return ([direction.Direction.down])
+
             return directions
 
         return lambda coords, past_direction: check(coords, past_direction)
