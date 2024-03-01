@@ -9,6 +9,7 @@ from engine.entity import direction
 class PlayerEventType(Enum):
     NoEvent = auto()
     FoodEvent = auto()
+    EnemyAttack = auto()
 
 class PlayerEvent:
     type_event: PlayerEventType
@@ -17,13 +18,19 @@ class PlayerEvent:
     def __init__(self, type_event, context = None):
         self.type_event = type_event
         self.context = context
-        
-class Player(pygame.sprite.Sprite):
+
+class PlayerState(Enum):
+    vulnerable = auto()
+    invulnerable = auto()
+    
+class Player:
     
     speed = 2
 
     player_direction = direction.Direction.stay
     player_want_direction = direction.Direction.no_direction
+    
+    player_state = PlayerState.vulnerable
     
     event = PlayerEvent(type_event = PlayerEventType.NoEvent)
     
@@ -34,14 +41,16 @@ class Player(pygame.sprite.Sprite):
 
     coords = coords.Coords()
 
+    invulnerable_timer = 0
     ticks_for_animation = 0
+    
+    player_anim = sprites.Sprites.player_animation
 
     def __init__(self):
-        super().__init__()
         self.screen_width = config.get_value('screen_width')
         self.screen_height = config.get_value('screen_height')
         self.cell_width = self.cell_height = self.screen_height/20
-        self.rect = sprites.Sprites.player_stay.get_rect()
+        self.rect = self.player_anim['stay'].get_rect()
     
     def set_spawn_coord(self, start_cell):
         self.rect.x, self.rect.y = self.coords.cells_to_pixels_xy(start_cell)
@@ -51,27 +60,24 @@ class Player(pygame.sprite.Sprite):
     
     def draw(self, screen: pygame.surface.Surface):
         if self.player_direction == direction.Direction.stay:
-            screen.blit(sprites.Sprites.player_stay, (self.rect.x, self.rect.y))
+            screen.blit(self.player_anim['stay'], (self.rect.x, self.rect.y))
         if self.player_direction == direction.Direction.right:
-            screen.blit(sprites.Sprites.move_right[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))
+            screen.blit(self.player_anim['right'][self.ticks_for_animation // 6], (self.rect.x, self.rect.y))
         if self.player_direction == direction.Direction.left:
-            screen.blit(sprites.Sprites.move_left[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))        
+            screen.blit(self.player_anim['left'][self.ticks_for_animation // 6], (self.rect.x, self.rect.y))        
         if self.player_direction == direction.Direction.down:        
-            screen.blit(sprites.Sprites.move_down[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))    
+            screen.blit(self.player_anim['down'][self.ticks_for_animation // 6], (self.rect.x, self.rect.y))    
         if self.player_direction == direction.Direction.up:
-            screen.blit(sprites.Sprites.move_up[self.ticks_for_animation // 6], (self.rect.x, self.rect.y))
+            screen.blit(self.player_anim['up'][self.ticks_for_animation // 6], (self.rect.x, self.rect.y))
 
     def calculate_ticks_for_animation(self):
         if self.ticks_for_animation >= 20:
             self.ticks_for_animation = 0
-            self.player_want_direction = direction.Direction.no_direction
         else:    
             self.ticks_for_animation += 1
 
     def move(self, is_block_ahead):
         coord = self.get_coord()
-        x_cell = coord[0]+1
-        y_cell = coord[1]+1
         
         self.calculate_ticks_for_animation()
 
@@ -89,7 +95,6 @@ class Player(pygame.sprite.Sprite):
             return
 
         if self.player_direction == direction.Direction.right:
-
             self.rect.x += self.speed
     
             if self.player_want_direction == direction.Direction.left:
@@ -101,15 +106,13 @@ class Player(pygame.sprite.Sprite):
                 self.player_direction = direction.Direction.stay
 
         if self.player_direction == direction.Direction.left:
-            
             self.rect.x -= self.speed
             
             if self.player_want_direction == direction.Direction.right:
                 self.player_direction = self.player_want_direction
                 self.player_want_direction = direction.Direction.no_direction
             
-            if is_block:
-                self.rect.x = self.coords.cells_to_pixels_x(x_cell)
+            if is_block and self.coords.get_x_in_cell(coord, self.rect.x) == 0:
                 self.player_direction = direction.Direction.stay
 
         if self.player_direction == direction.Direction.down:
@@ -124,40 +127,58 @@ class Player(pygame.sprite.Sprite):
                 self.player_direction = direction.Direction.stay
 
         if self.player_direction == direction.Direction.up:
-
             self.rect.y -= self.speed
 
             if self.player_want_direction == direction.Direction.down:
                 self.player_direction = self.player_want_direction
                 self.player_want_direction = direction.Direction.no_direction
             
-            if  is_block:
-                self.rect.y = self.coords.cells_to_pixels_y(y_cell)
+            if  is_block and self.coords.get_y_in_cell(coord, self.rect.y) == 0:
                 self.player_direction = direction.Direction.stay
 
-    def interact(self, current_cell):
+    def interact_cell(self, current_cell):
         x_in_cell, y_in_cell = self.coords.get_xy_in_cell(self.get_coord(), self.rect.x, self.rect.y)
         if isinstance(current_cell, cell.FoodCell):
             if self.player_direction == direction.Direction.right or self.player_direction == direction.Direction.left:
                 if x_in_cell in range(0, 3):
-                    self.event = self.get_player_event(1)
+                    self.event = self.get_player_event(2)
                     self.total_score += 50
                     self.curr_level_score += 50
             if self.player_direction == direction.Direction.up or self.player_direction == direction.Direction.down:
                 if y_in_cell in range(0, 3):
-                    self.event = self.get_player_event(1)
+                    self.event = self.get_player_event(2)
                     self.total_score += 50
                     self.curr_level_score += 50
 
+    def interact_enemy(self, enemy_coords):
+        enemy_x, enemy_y = enemy_coords
+        if self.player_state == PlayerState.vulnerable:
+            if enemy_x >= self.rect.x and enemy_x <= self.rect.x+39 and enemy_y >= self.rect.y and enemy_y <= self.rect.y+39:
+                self.helthpoints -= 1
+                self.player_state = PlayerState.invulnerable
+            if self.rect.x >= enemy_x and self.rect.x <= enemy_x+39 and self.rect.y >= enemy_y and self.rect.y <= enemy_y+39:
+                self.helthpoints -= 1
+                self.player_state = PlayerState.invulnerable
+        self.invulnerable_counter()
+        self.destraction_helthpoint_animation()
+           
+    def invulnerable_counter(self):
+        if self.player_state == PlayerState.invulnerable:
+            if self.invulnerable_timer == 200:
+                self.invulnerable_timer = 0
+                self.player_state = PlayerState.vulnerable
+            else:
+                self.invulnerable_timer += 1
+        
     def get_player_event(self, event):
         events = {
-            0: PlayerEventType.NoEvent,
-            1: PlayerEventType.FoodEvent
+            1: PlayerEventType.NoEvent,
+            2: PlayerEventType.FoodEvent,
         }
         return PlayerEvent(type_event=events[event], context={'coords': self.get_coord()})
     
     def clear_event(self):
-        self.event = self.get_player_event(0)
+        self.event = self.get_player_event(1)
         
     def change_direction(self, direction):
         self.player_want_direction = direction
@@ -167,3 +188,16 @@ class Player(pygame.sprite.Sprite):
         
     def clear_curr_level_score(self):
         self.curr_level_score = 0
+        
+    def clear_start_stats(self):
+        self.helthpoints = 4
+        self.total_score = 0
+        self.curr_level_score = 0
+    
+    def destraction_helthpoint_animation(self):
+        appear_nums = [50, 150]
+        disappear_nums = [100, 200]
+        if self.invulnerable_timer in appear_nums:
+            self.helthpoints += 1
+        if self.invulnerable_timer in disappear_nums:
+            self.helthpoints -= 1

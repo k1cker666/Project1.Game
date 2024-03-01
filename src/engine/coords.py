@@ -1,3 +1,5 @@
+from engine.entity import area
+
 class Coords:
     screen_width = 650
     screen_height = 800
@@ -43,3 +45,15 @@ class Coords:
     def get_y_in_cell(self, coords: tuple, y):
         y_in_cell = int(y - self.start_board_y - coords[1]*self.cell_height)
         return y_in_cell
+    
+    def get_area_from_coords(self, x, y):
+        if x <= 7:
+            if y <= 7:
+                return area.Area.areaA
+            elif y >= 7:
+                return area.Area.areaC
+        elif x >= 7:
+            if y <= 7:
+                return area.Area.areaB
+            elif y >= 7:
+                return area.Area.areaD

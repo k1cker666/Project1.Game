@@ -2,13 +2,14 @@ import json
 from engine.board import cell
 from engine import coords
 from engine.entity import direction
+from engine.entity import area
 
 class Board:
     game_map: list
     coords = coords.Coords()
     
-    def __init__(self, level_name):
-        file_path = str("././config/maps/"+level_name)
+    def __init__(self, level_area):
+        file_path = str("././config/maps/"+level_area)
         file_map = open(file_path, 'r')
         game_map_json = json.loads(file_map.read())
         file_map.close()
@@ -32,6 +33,9 @@ class Board:
                 elif item == 3:
                     self.game_map[py][px] = cell.StartCell()
                     px += 1
+                elif item == 4:
+                    self.game_map[py][px] = cell.EnemyStartCell()
+                    px += 1
                 if px == len(self.game_map[0]):
                     px = 0
                     py += 1
@@ -43,7 +47,7 @@ class Board:
                 px = self.coords.cells_to_pixels_x(x)
                 item.draw(screen, px, py)
         
-    def find_start_cell(self):
+    def get_player_start_cell(self):
         for py in range(len(self.game_map)):
             for px in range(len(self.game_map[py])):
                 if isinstance(self.game_map[py][px], cell.StartCell):
@@ -80,12 +84,102 @@ class Board:
             if curr_direction == direction.Direction.right:
                 return isinstance(self.game_map[y][x+1], cell.BlockCell)
             elif curr_direction == direction.Direction.left:
-                return isinstance(self.game_map[y][x], cell.BlockCell)
+                return isinstance(self.game_map[y][x-1], cell.BlockCell)
             elif curr_direction == direction.Direction.down:
                 return isinstance(self.game_map[y+1][x], cell.BlockCell)
             elif curr_direction == direction.Direction.up:
-                return isinstance(self.game_map[y][x], cell.BlockCell)
+                return isinstance(self.game_map[y-1][x], cell.BlockCell)
             else:
                 return False
 
         return lambda coords, curr_direction: check(coords, curr_direction)
+    
+    def get_enemy_start_cell(self, e_area):
+        if e_area == area.Area.areaA:
+            for py in range(0, 8):
+                for px in range(0, 8):
+                    if isinstance(self.game_map[py][px], cell.EnemyStartCell):
+                        return ((px, py))
+        if e_area == area.Area.areaB:
+            for py in range(0, 8):
+                for px in range(8, 15):
+                    if isinstance(self.game_map[py][px], cell.EnemyStartCell):
+                        return ((px, py))
+        if e_area == area.Area.areaC:
+            for py in range(7, 15):
+                for px in range(0, 8):
+                    if isinstance(self.game_map[py][px], cell.EnemyStartCell):
+                        return ((px, py))
+        if e_area == area.Area.areaD:
+            for py in range(7, 15):
+                for px in range(7, 15):
+                    if isinstance(self.game_map[py][px], cell.EnemyStartCell):
+                        return ((px, py))
+                    
+    def get_free_direction(self):
+        def check(coords, past_direction):
+            directions = []
+            x, y = coords[0], coords[1]
+            if past_direction == direction.Direction.no_direction:
+                if not isinstance(self.game_map[y][x+1], cell.BlockCell):
+                    directions.append(direction.Direction.right)
+                if not isinstance(self.game_map[y][x-1], cell.BlockCell):
+                    directions.append(direction.Direction.left) 
+                if not isinstance(self.game_map[y-1][x], cell.BlockCell):
+                    directions.append(direction.Direction.up)
+                if not isinstance(self.game_map[y+1][x], cell.BlockCell):
+                    directions.append(direction.Direction.down)
+                
+            if past_direction == direction.Direction.right:
+                if not isinstance(self.game_map[y-1][x], cell.BlockCell):
+                    directions.append(direction.Direction.up)
+                if not isinstance(self.game_map[y+1][x], cell.BlockCell):
+                    directions.append(direction.Direction.down)
+                if len(directions) == 0:
+                    return ([direction.Direction.left])
+                 
+            elif past_direction == direction.Direction.left:
+                if not isinstance(self.game_map[y-1][x], cell.BlockCell):
+                    directions.append(direction.Direction.up)
+                if not isinstance(self.game_map[y+1][x], cell.BlockCell):
+                    directions.append(direction.Direction.down)
+                if len(directions) == 0:
+                    return ([direction.Direction.right])
+                 
+            elif past_direction == direction.Direction.down:
+                if not isinstance(self.game_map[y][x+1], cell.BlockCell):
+                    directions.append(direction.Direction.right)
+                if not isinstance(self.game_map[y][x-1], cell.BlockCell):
+                    directions.append(direction.Direction.left)
+                if len(directions) == 0:
+                    return ([direction.Direction.up])
+                 
+            elif past_direction == direction.Direction.up:
+                if not isinstance(self.game_map[y][x+1], cell.BlockCell):
+                    directions.append(direction.Direction.right)
+                if not isinstance(self.game_map[y][x-1], cell.BlockCell):
+                    directions.append(direction.Direction.left)
+                if len(directions) == 0:
+                    return ([direction.Direction.down])
+            return directions
+
+        return lambda coords, past_direction: check(coords, past_direction)
+    
+    def is_own_area(self):
+        def check(coords, curr_direction, e_area):
+            x = coords[0]
+            y = coords[1]
+        
+            if curr_direction == direction.Direction.right:
+                return not self.coords.get_area_from_coords(x+1, y) == e_area
+        
+            elif curr_direction == direction.Direction.left:
+                return not self.coords.get_area_from_coords(x-1, y) == e_area
+        
+            elif curr_direction == direction.Direction.down:
+                return not self.coords.get_area_from_coords(x, y+1) == e_area
+            
+            elif curr_direction == direction.Direction.up:
+                return not self.coords.get_area_from_coords(x, y-1) == e_area
+
+        return lambda coords, curr_direction, e_area: check(coords, curr_direction, e_area)
