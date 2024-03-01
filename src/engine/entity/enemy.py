@@ -43,24 +43,30 @@ class Enemy:
         self.calculate_ticks_for_animation()
         pos = (self.rect.x, self.rect.y)
         if self.area == area.Area.areaA:
-            self.draw_blinky(screen, pos)
+            self.draw_ghost(screen, pos)
         if self.area == area.Area.areaB:
-            self.draw_clyde(screen, pos)
+            self.draw_ghost(screen, pos)
         if self.area == area.Area.areaC:
-            self.draw_inky(screen, pos)
+            self.draw_ghost(screen, pos)
         if self.area == area.Area.areaD:
-            self.draw_pinky(screen, pos)
-            
-    def draw_blinky(self, screen: pygame.surface.Surface, pos):
-        blinky_anim = sprites.Sprites.enemies_animation['blinky']
-        if self.enemy_direction == direction.Direction.no_direction or self.enemy_direction == direction.Direction.right:
-            screen.blit(blinky_anim['right'][self.ticks_for_animation // 6], pos)
+            self.draw_ghost(screen, pos)
+    
+    def draw_ghost(self, screen: pygame.surface.Surface, pos):
+        enemies = {
+            area.Area.areaA: 'blinky',
+            area.Area.areaB: 'clyde',
+            area.Area.areaC: 'inky',
+            area.Area.areaD: 'pinky',
+        }
+        ghost_anim = sprites.Sprites.enemies_animation
+        if self.enemy_direction == direction.Direction.right:
+            screen.blit(ghost_anim[enemies[self.area]]['right'][self.ticks_for_animation // 6], pos)
         if self.enemy_direction == direction.Direction.left:
-            screen.blit(blinky_anim['left'][self.ticks_for_animation // 6], pos)        
+            screen.blit(ghost_anim[enemies[self.area]]['left'][self.ticks_for_animation // 6], pos)        
         if self.enemy_direction == direction.Direction.down:        
-            screen.blit(blinky_anim['down'][self.ticks_for_animation // 6], pos)    
-        if self.enemy_direction == direction.Direction.up:
-            screen.blit(blinky_anim['up'][self.ticks_for_animation // 6], pos)
+            screen.blit(ghost_anim[enemies[self.area]]['down'][self.ticks_for_animation // 6], pos)    
+        if self.enemy_direction == direction.Direction.up or self.enemy_direction == direction.Direction.no_direction:
+            screen.blit(ghost_anim[enemies[self.area]]['up'][self.ticks_for_animation // 6], pos)
     
     def draw_clyde(self, screen: pygame.surface.Surface, pos):
         clyde_anim = sprites.Sprites.enemies_animation['clyde']
