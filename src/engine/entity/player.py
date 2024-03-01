@@ -153,10 +153,10 @@ class Player:
     def interact_enemy(self, enemy_coords):
         enemy_x, enemy_y = enemy_coords
         if self.player_state == PlayerState.vulnerable:
-            if enemy_x >= self.rect.x and enemy_x <= self.rect.x+40 and enemy_y >= self.rect.y and enemy_y <= self.rect.y+40:
+            if enemy_x >= self.rect.x and enemy_x <= self.rect.x+39 and enemy_y >= self.rect.y and enemy_y <= self.rect.y+39:
                 self.helthpoints -= 1
                 self.player_state = PlayerState.invulnerable
-            if self.rect.x >= enemy_x and self.rect.x <= enemy_x+40 and self.rect.y >= enemy_y and self.rect.y <= enemy_y+40:
+            if self.rect.x >= enemy_x and self.rect.x <= enemy_x+39 and self.rect.y >= enemy_y and self.rect.y <= enemy_y+39:
                 self.helthpoints -= 1
                 self.player_state = PlayerState.invulnerable
         self.invulnerable_counter()
