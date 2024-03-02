@@ -24,13 +24,14 @@ class GameManager:
     level_num = 0
     interface = Interface()
     
-    def __init__(self):
+    def __init__(self, sounds: dict):
         self.FPS = config.get_value('FPS')
         level_name = self.get_level(self.level_num)
         self.board = board.Board(level_name)
         self.player = player.Player()
         self.player.set_spawn_coord(self.board.get_player_start_cell())
         self.enemy_innit()
+        self.sounds = sounds
     
     def run(self, screen: pygame.surface.Surface):
         while True:
@@ -67,6 +68,10 @@ class GameManager:
         elif self.player.event.type_event == player.PlayerEventType.FoodEvent:
             self.board.set_empty_cell(self.player.event.context['coords'])
             self.player.clear_event()
+            self.sounds['food'].play()
+        elif self.player.event.type_event == player.PlayerEventType.EnemyAttack:
+            self.player.clear_event()
+            self.sounds['enemy_attack'].play()
 
     def print_menu(self, screen: pygame.surface.Surface):
         menu.print_menu(screen)

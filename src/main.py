@@ -4,6 +4,7 @@ import sys
 from engine import game_manager
 
 def init_game():
+    pygame.mixer.pre_init(44100, -16, 1, 512)
     pygame.init()
     config.init()
     width = config.get_value('screen_width')
@@ -20,7 +21,16 @@ def quit_game():
     pygame.quit()
     sys.exit()
 
+def init_sound(file):
+    sound = pygame.mixer.Sound(file)
+    sound.set_volume(0.3)
+    return sound
+
 screen = init_game()
-game_manager = game_manager.GameManager()
+sounds = {
+    'food': init_sound('./sounds/food.wav'),
+    'enemy_attack': init_sound('./sounds/enemyattack.wav')
+}
+game_manager = game_manager.GameManager(sounds)
 game_manager.run(screen)
 quit_game()
