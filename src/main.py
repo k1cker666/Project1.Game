@@ -29,7 +29,8 @@ def init_sound(file):
 screen = init_game()
 sounds = {
     'food': init_sound('./sounds/food.wav'),
-    'enemy_attack': init_sound('./sounds/enemyattack.wav')
+    'enemy_attack': init_sound('./sounds/enemyattack.wav'),
+    'level_up': init_sound('./sounds/levelup.wav')
 }
 game_manager = game_manager.GameManager(sounds)
 game_manager.run(screen)

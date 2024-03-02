@@ -116,6 +116,7 @@ class GameManager:
                     self.board.admin_clear_food_cells()
         if self.board.check_food_cells():
             self.interface.set_alpha_background(screen)
+            self.sounds['level_up'].play()
             if self.check_levels():
                 self.game_state = StateManager.game_comlete
             else:
