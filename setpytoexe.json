@@ -1,0 +1,189 @@
+{
+ "version": "auto-py-to-exe-configuration_v1",
+ "pyinstallerOptions": [
+  {
+   "optionDest": "noconfirm",
+   "value": true
+  },
+  {
+   "optionDest": "filenames",
+   "value": "D:/Files/projects/project1/src/main.py"
+  },
+  {
+   "optionDest": "onefile",
+   "value": false
+  },
+  {
+   "optionDest": "console",
+   "value": false
+  },
+  {
+   "optionDest": "icon_file",
+   "value": "D:/Files/projects/project1/images/ghost.ico"
+  },
+  {
+   "optionDest": "name",
+   "value": "packman"
+  },
+  {
+   "optionDest": "clean_build",
+   "value": false
+  },
+  {
+   "optionDest": "strip",
+   "value": false
+  },
+  {
+   "optionDest": "noupx",
+   "value": false
+  },
+  {
+   "optionDest": "disable_windowed_traceback",
+   "value": false
+  },
+  {
+   "optionDest": "uac_admin",
+   "value": false
+  },
+  {
+   "optionDest": "uac_uiaccess",
+   "value": false
+  },
+  {
+   "optionDest": "argv_emulation",
+   "value": false
+  },
+  {
+   "optionDest": "bootloader_ignore_signals",
+   "value": false
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/BlockCell.png;images/sprites/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/EmptyCell.png;images/sprites/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/FoodCell.png;images/sprites/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/HP.png;images/sprites/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/Player/Down_1.png;images/sprites/player/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/Player/Down_2.png;images/sprites/player/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/Player/Down_3.png;images/sprites/player/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/Player/Left_1.png;images/sprites/player/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/Player/Left_2.png;images/sprites/player/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/Player/Left_3.png;images/sprites/player/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/Player/Right_1.png;images/sprites/player/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/Player/Right_2.png;images/sprites/player/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/Player/Right_3.png;images/sprites/player/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/Player/Stay.png;images/sprites/player/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/Player/Up_1.png;images/sprites/player/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/Player/Up_2.png;images/sprites/player/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/Player/Up_3.png;images/sprites/player/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/Enemy/Blinky;images/sprites/enemy/blinky/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/Enemy/Clyde;images/sprites/enemy/clyde/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/Enemy/Inky;images/sprites/enemy/inky/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/sprites/Enemy/Pinky;images/sprites/enemy/pinky/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/fonts/BetterVCR.ttf;fonts/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/sounds/enemyattack.wav;sounds/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/sounds/food.wav;sounds/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/sounds/levelup.wav;sounds/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/ghost.png;images/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/images/testbg.png;images/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/config/config.json;config/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/config/maps/map_1.json;config/maps/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/config/maps/map_2.json;config/maps/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/Files/projects/project1/config/maps/map_3.json;config/maps/"
+  }
+ ],
+ "nonPyinstallerOptions": {
+  "increaseRecursionLimit": true,
+  "manualArguments": ""
+ }
+}

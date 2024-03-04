@@ -1,15 +1,17 @@
 import json
+import os
+from resouce_path import resource_path
 
 config = dict()
 
 def init():
-    file = open('./config/config.json', 'r')
+    file = open(resource_path(os.path.join('config', 'config.json')), 'r')
     global config
     config = json.loads(file.read())
     file.close()
     
 def save():
-    file = open('./config/config.json', 'w')
+    file = open(resource_path(os.path.join('config', 'config.json')), 'w')
     global config
     config = json.dumps(config, indent=4)
     file.write(config)

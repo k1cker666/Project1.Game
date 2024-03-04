@@ -3,13 +3,15 @@ from engine.board import cell
 from engine import coords
 from engine.entity import direction
 from engine.entity import area
+import os
+from resouce_path import resource_path
 
 class Board:
     game_map: list
     coords = coords.Coords()
     
     def __init__(self, level_name):
-        file_path = str("././config/maps/"+level_name)
+        file_path = resource_path(os.path.join('config', 'maps', f'{level_name}'))
         file_map = open(file_path, 'r')
         game_map_json = json.loads(file_map.read())
         file_map.close()

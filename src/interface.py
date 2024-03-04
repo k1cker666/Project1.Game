@@ -1,6 +1,8 @@
 import pygame
 from engine import sprites
 import config
+import os
+from resouce_path import resource_path
 
 class Interface:
     
@@ -9,9 +11,9 @@ class Interface:
         screen_height = config.get_value('screen_height')
         info_board_height = screen_width/6
         info_board_width = int(screen_height/3)
-        font = pygame.font.Font('./fonts/BetterVCR.ttf',  int(info_board_height/6))
-        font_score = pygame.font.Font('./fonts/BetterVCR.ttf',  int(info_board_height/3))
-        font_level = pygame.font.Font('./fonts/BetterVCR.ttf',  int(info_board_height/3))
+        font = pygame.font.Font(resource_path(os.path.join('fonts', 'BetterVCR.ttf')),  int(info_board_height/6))
+        font_score = pygame.font.Font(resource_path(os.path.join('fonts', 'BetterVCR.ttf')),  int(info_board_height/3))
+        font_level = pygame.font.Font(resource_path(os.path.join('fonts', 'BetterVCR.ttf')),  int(info_board_height/3))
         
         level_text = font_level.render(f'Level {level_num+1}', 1, (255, 255, 0))
         level_text_pos = level_text.get_rect(center=(screen_width//2, 20))
@@ -61,12 +63,12 @@ class Interface:
         level_complete_window.fill((0, 0, 0))
         level_complete_window_pos = level_complete_window.get_rect(center=(config.get_value('screen_width')//2, config.get_value('screen_height')//2))
         
-        font = pygame.font.Font('./fonts/BetterVCR.ttf',  int(window_height/7))
+        font = pygame.font.Font(resource_path(os.path.join('fonts', 'BetterVCR.ttf')),  int(window_height/7))
         level_complete_text = font.render('Game paused', 1, (255, 255, 0))
         level_complete_text_pos = level_complete_text.get_rect(center=(window_width//2, window_height/5))
         level_complete_window.blit(level_complete_text, level_complete_text_pos)
         
-        font_button = pygame.font.Font('./fonts/BetterVCR.ttf',  int(window_height/10))
+        font_button = pygame.font.Font(resource_path(os.path.join('fonts', 'BetterVCR.ttf')),  int(window_height/10))
         resume = font_button.render('1. Resume', 1, (255, 255, 0))
         resume_pos = resume.get_rect(center=(window_width//2, window_height*3/6))
         level_complete_window.blit(resume, resume_pos)
@@ -86,12 +88,12 @@ class Interface:
         level_complete_window.fill((0, 0, 0))
         level_complete_window_pos = level_complete_window.get_rect(center=(config.get_value('screen_width')//2, config.get_value('screen_height')//2))
         
-        font = pygame.font.Font('./fonts/BetterVCR.ttf',  int(window_height/7))
+        font = pygame.font.Font(resource_path(os.path.join('fonts', 'BetterVCR.ttf')),  int(window_height/7))
         level_complete_text = font.render(f'Level {level_num+1} complete!', 1, (255, 255, 0))
         level_complete_text_pos = level_complete_text.get_rect(center=(window_width//2, window_height/5))
         level_complete_window.blit(level_complete_text, level_complete_text_pos)
         
-        font_button = pygame.font.Font('./fonts/BetterVCR.ttf',  int(window_height/10))
+        font_button = pygame.font.Font(resource_path(os.path.join('fonts', 'BetterVCR.ttf')),  int(window_height/10))
         next_level = font_button.render('1. Next level', 1, (255, 255, 0))
         next_level_pos = next_level.get_rect(center=(window_width//2, window_height*4/8))
         level_complete_window.blit(next_level, next_level_pos)
@@ -115,7 +117,7 @@ class Interface:
         game_complete_window.fill((0, 0, 0))
         game_complete_window_pos = game_complete_window.get_rect(center=(config.get_value('screen_width')//2, config.get_value('screen_height')//2))
         
-        font = pygame.font.Font('./fonts/BetterVCR.ttf',  int(window_height/7))
+        font = pygame.font.Font(resource_path(os.path.join('fonts', 'BetterVCR.ttf')),  int(window_height/7))
         game_complete_text = font.render('Game complete!', 1, (255, 255, 0))
         game_complete_text_pos = game_complete_text.get_rect(center=(window_width//2, window_height/5))
         game_complete_window.blit(game_complete_text, game_complete_text_pos)
@@ -124,7 +126,7 @@ class Interface:
         game_complete_score_pos = game_complete_score.get_rect(center=(window_width//2, window_height*2/5))
         game_complete_window.blit(game_complete_score, game_complete_score_pos)
         
-        font_button = pygame.font.Font('./fonts/BetterVCR.ttf',  int(window_height/10))
+        font_button = pygame.font.Font(resource_path(os.path.join('fonts', 'BetterVCR.ttf')),  int(window_height/10))
         menu = font_button.render('1. Menu', 1, (255, 255, 0))
         menu_pos = menu.get_rect(center=(window_width//2, window_height*5/6))
         game_complete_window.blit(menu, menu_pos)
@@ -140,7 +142,7 @@ class Interface:
         game_over_window.fill((0, 0, 0))
         game_over_window_pos = game_over_window.get_rect(center=(config.get_value('screen_width')//2, config.get_value('screen_height')//2))
         
-        font = pygame.font.Font('./fonts/BetterVCR.ttf',  int(window_height/7))
+        font = pygame.font.Font(resource_path(os.path.join('fonts', 'BetterVCR.ttf')),  int(window_height/7))
         game_over_text = font.render('Game over!', 1, (255, 255, 0))
         game_over_text_pos = game_over_text.get_rect(center=(window_width//2, window_height/5))
         game_over_window.blit(game_over_text, game_over_text_pos)
@@ -149,7 +151,7 @@ class Interface:
         game_over_score_pos = game_over_score.get_rect(center=(window_width//2, window_height*2/5))
         game_over_window.blit(game_over_score, game_over_score_pos)
 
-        font_button = pygame.font.Font('./fonts/BetterVCR.ttf',  int(window_height/10))
+        font_button = pygame.font.Font(resource_path(os.path.join('fonts', 'BetterVCR.ttf')),  int(window_height/10))
         restart_game = font_button.render('1. Restart game', 1, (255, 255, 0))
         restart_game_pos = restart_game.get_rect(center=(window_width//2, window_height*5/6))
         game_over_window.blit(restart_game, restart_game_pos)

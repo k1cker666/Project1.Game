@@ -2,6 +2,9 @@ import config
 import pygame
 import sys
 from engine import game_manager
+from resouce_path import resource_path
+import os
+
 
 def init_game():
     pygame.mixer.pre_init(44100, -16, 1, 512)
@@ -12,7 +15,7 @@ def init_game():
     game_name = config.get_value('game_name')
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption(game_name)
-    icon = pygame.image.load('./images/ghost.png')
+    icon = pygame.image.load(resource_path(os.path.join('images', 'ghost.png')))
     pygame.display.set_icon(icon)
     return screen
 
@@ -28,9 +31,9 @@ def init_sound(file):
 
 screen = init_game()
 sounds = {
-    'food': init_sound('./sounds/food.wav'),
-    'enemy_attack': init_sound('./sounds/enemyattack.wav'),
-    'level_up': init_sound('./sounds/levelup.wav')
+    'food': init_sound(resource_path(os.path.join('sounds', 'food.wav'))),
+    'enemy_attack': init_sound(resource_path(os.path.join('sounds', 'enemyattack.wav'))),
+    'level_up': init_sound(resource_path(os.path.join('sounds', 'levelup.wav')))
 }
 game_manager = game_manager.GameManager(sounds)
 game_manager.run(screen)
