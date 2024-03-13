@@ -94,7 +94,7 @@ class Board:
 
         return lambda coords, curr_direction: check(coords, curr_direction)
     
-    def get_enemy_start_cell(self, e_area):
+    def get_enemy_start_cell1(self, e_area):
         if e_area == area.Area.areaA:
             for py in range(0, 8):
                 for px in range(0, 8):
@@ -115,6 +115,14 @@ class Board:
                 for px in range(7, 15):
                     if isinstance(self.game_map[py][px], cell.EnemyStartCell):
                         return ((px, py))
+    
+    def get_enemy_start_cell(self):
+        enemy_start_cells = []
+        for py in range(15):
+            for px in range(15):
+                if isinstance(self.game_map[py][px], cell.EnemyStartCell):
+                    enemy_start_cells.append((px, py))
+        return enemy_start_cells
                     
     def get_free_direction(self):
         def check(coords, past_direction):

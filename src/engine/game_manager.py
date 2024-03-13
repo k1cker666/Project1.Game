@@ -53,14 +53,14 @@ class GameManager:
             self.clock.tick(self.FPS)
                     
     def enemy_innit(self):
-        self.blinky = enemy.Enemy(area.Area.areaA)
-        self.clyde = enemy.Enemy(area.Area.areaB)
-        self.inky = enemy.Enemy(area.Area.areaC)
-        self.pinky = enemy.Enemy(area.Area.areaD)
-        self.enemies = [self.blinky, self.clyde, self.inky, self.pinky]
+        blinky = enemy.Enemy(area.Area.areaA)
+        clyde = enemy.Enemy(area.Area.areaB)
+        inky = enemy.Enemy(area.Area.areaC)
+        pinky = enemy.Enemy(area.Area.areaD)
+        self.enemies = [blinky, clyde, inky, pinky]
+        start_cells = self.board.get_enemy_start_cell()
         for unit in self.enemies:
-            unit.create_unit()
-            unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.area))
+            unit.set_spawn_coord(start_cells)
             
     def handle_player_event(self):
         if self.player.event.type_event == player.PlayerEventType.NoEvent:
