@@ -1,7 +1,7 @@
 {
     "screen_height": 800,
     "screen_width": 650,
-    "game_name": "CS3",
+    "game_name": "Packman",
     "cell_width": 40,
     "cell_height": 40,
     "FPS": 40,
