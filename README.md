@@ -32,8 +32,20 @@
 
 ## Скриншоты:
 
-[Меню игры](https://github.com/k1cker666/Project1.Game/tree/main/images/github/menu.png) 
+Меню игры:  
+![Image alt](https://github.com/k1cker666/Project1.Game/tree/main/images/github/menu.png)
 
+Первый уровень:  
+![Image alt](https://github.com/k1cker666/Project1.Game/tree/main/images/github/frstlvl.png)
+
+Окно завершения уровня:  
+![Image alt](https://github.com/k1cker666/Project1.Game/tree/main/images/github/lvlcmplt.png)
+
+Окно при потере всего здоровья:  
+![Image alt](https://github.com/k1cker666/Project1.Game/tree/main/images/github/gmvr.png)
+
+Окно конца игры:  
+![Image alt](https://github.com/k1cker666/Project1.Game/tree/main/images/github/gmcmplt.png)
 
 ## Стек технологий:
 - Phyton:  
