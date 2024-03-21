@@ -24,13 +24,14 @@ class GameManager:
     level_num = 0
     interface = Interface()
     
-    def __init__(self):
+    def __init__(self, sounds: dict):
         self.FPS = config.get_value('FPS')
         level_name = self.get_level(self.level_num)
         self.board = board.Board(level_name)
         self.player = player.Player()
         self.player.set_spawn_coord(self.board.get_player_start_cell())
         self.enemy_innit()
+        self.sounds = sounds
     
     def run(self, screen: pygame.surface.Surface):
         while True:
@@ -52,14 +53,14 @@ class GameManager:
             self.clock.tick(self.FPS)
                     
     def enemy_innit(self):
-        self.blinky = enemy.Enemy(area.Area.areaA)
-        self.clyde = enemy.Enemy(area.Area.areaB)
-        self.inky = enemy.Enemy(area.Area.areaC)
-        self.pinky = enemy.Enemy(area.Area.areaD)
-        self.enemies = [self.blinky, self.clyde, self.inky, self.pinky]
+        blinky = enemy.Enemy(area.Area.areaA)
+        clyde = enemy.Enemy(area.Area.areaB)
+        inky = enemy.Enemy(area.Area.areaC)
+        pinky = enemy.Enemy(area.Area.areaD)
+        self.enemies = [blinky, clyde, inky, pinky]
+        start_cells = self.board.get_enemy_start_cell()
         for unit in self.enemies:
-            unit.create_unit()
-            unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.area))
+            unit.set_spawn_coord(start_cells)
             
     def handle_player_event(self):
         if self.player.event.type_event == player.PlayerEventType.NoEvent:
@@ -67,6 +68,10 @@ class GameManager:
         elif self.player.event.type_event == player.PlayerEventType.FoodEvent:
             self.board.set_empty_cell(self.player.event.context['coords'])
             self.player.clear_event()
+            self.sounds['food'].play()
+        elif self.player.event.type_event == player.PlayerEventType.EnemyAttack:
+            self.player.clear_event()
+            self.sounds['enemy_attack'].play()
 
     def print_menu(self, screen: pygame.surface.Surface):
         menu.print_menu(screen)
@@ -111,6 +116,7 @@ class GameManager:
                     self.board.admin_clear_food_cells()
         if self.board.check_food_cells():
             self.interface.set_alpha_background(screen)
+            self.sounds['level_up'].play()
             if self.check_levels():
                 self.game_state = StateManager.game_comlete
             else:
@@ -178,6 +184,7 @@ class GameManager:
         for unit in self.enemies:
             unit.clear_delay_timer()
             unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.area))
+            unit.enemy_direction = direction.Direction.no_direction
         self.game_state = StateManager.game_process
         
     def restart_level(self):
