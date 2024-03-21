@@ -169,7 +169,14 @@ class GameManager:
                 if event.key == pygame.K_1:
                     self.restart_game()
                     self.game_state = StateManager.in_menu
-    
+     
+    def respawn_enemies(self):
+        start_cells = self.board.get_enemy_start_cell()
+        for unit in self.enemies:
+            unit.clear_delay_timer()
+            unit.set_spawn_coord(start_cells)
+            unit.enemy_direction = direction.Direction.no_direction
+            
     def get_level(self, level_num):
         level_list = config.get_value('levels')
         level_name = level_list[level_num]['map_file']
@@ -181,18 +188,13 @@ class GameManager:
         self.board = board.Board(level_name)
         self.player.set_spawn_coord(self.board.get_player_start_cell())
         self.player.clear_curr_level_score()
-        for unit in self.enemies:
-            unit.clear_delay_timer()
-            unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.area))
-            unit.enemy_direction = direction.Direction.no_direction
+        self.respawn_enemies()
         self.game_state = StateManager.game_process
         
     def restart_level(self):
         self.player.total_score -= self.player.curr_level_score
         self.player.clear_curr_level_score()
-        for unit in self.enemies:
-            unit.clear_delay_timer()
-            unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.area))
+        self.respawn_enemies()
         level_name = self.get_level(self.level_num)
         self.board = board.Board(level_name)
         self.player.set_spawn_coord(self.board.get_player_start_cell())
@@ -201,9 +203,7 @@ class GameManager:
     def restart_game(self):
         self.level_num = 0
         self.player.clear_start_stats()
-        for unit in self.enemies:
-            unit.clear_delay_timer()
-            unit.set_spawn_coord(self.board.get_enemy_start_cell(unit.area))
+        self.respawn_enemies()
         level_name = self.get_level(self.level_num)
         self.board = board.Board(level_name)
         self.player.set_spawn_coord(self.board.get_player_start_cell())
