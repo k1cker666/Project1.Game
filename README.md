@@ -36,7 +36,7 @@
 
 Необходимо распаковать архив packman.7z и запустить исполняемый файл.
 
-- Запуск phyton скрипта:
+- Запуск python скрипта:
 
 Клонируйте репозиторий:
 ```
@@ -73,7 +73,7 @@ https://github.com/k1cker666/Project1.Game/assets/154748155/79c069d6-e859-4f94-8
 ![Alt](https://github.com/k1cker666/Project1.Game/raw/main/images/github/gmcmplt.png)
 
 ## Стек технологий:
-- Phyton:  
+- Python:  
   Вся логика прописана на языке python
 - Pygame:  
   Для реализации игры была использована библиотека pygame
