@@ -57,7 +57,11 @@ python src/main.py
 ![Alt](https://github.com/k1cker666/Project1.Game/raw/main/images/github/menu.png)
 
 Игровой процесс:  
-![Alt](https://github.com/k1cker666/Project1.Game/assets/154748155/070e6898-1d71-4ac9-8df3-fc0e8eb6b171)
+
+
+https://github.com/k1cker666/Project1.Game/assets/154748155/79c069d6-e859-4f94-8416-16d4c8297aff
+
+
 
 Окно завершения уровня:  
 ![Alt](https://github.com/k1cker666/Project1.Game/raw/main/images/github/lvlcmplt.png)
